@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categorias</title>
+  <style>
+    :root {
+      --font-family: 'Archivo', sans-serif;
+      --h1: 800 24px/135% var(--font-family);
+      --text: 400 16px/140% var(--font-family);
+      --cor-principal: #291B1A;
+      --cor-secundaria: #5ca3b3;
+      --cor-fundo: #F0E8C2;
+      --cor-body: #0F172A;
+    }
+
+    body {
+      background-color: var(--cor-body);
+      font-family: Arial, Helvetica, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      border: 1px solid var(--cor-principal);
+      color: var(--cor-principal);
+      padding: 2rem;
+      background-color: var(--cor-fundo);
+      width: 50rem;
+      min-height: 50vh;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 0.8rem;
+    }
+
+    h1 {
+      font: var(--h1);
+      text-align: center;
+      font-size: 2rem;
+    }
+
+    .fonth1 {
+      font: var(--h1);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    table, th, td {
+      border: 1px solid black;
+      padding: 0.5rem;
+      text-align: center;
+      vertical-align: middle;
+      background-color: aliceblue;
+    }
+
+    /* Formulário */
+    .form-principal {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    .form-principal input[type="text"],
+    .form-principal textarea,
+    .form-principal select {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+
+    .form-principal textarea {
+      resize: vertical;
+      min-height: 4rem;
+    }
+
+    .form-principal input[type="text"]:focus,
+    .form-principal textarea:focus,
+    .form-principal select:focus {
+      border-color: #007BFF;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+      outline: none;
+    }
+
+    /* Botões */
+    .button-td {
+      background-color: var(--cor-principal);
+      color: #fff;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      display: inline-block;
+    }
+
+    .button-td:hover {
+      background-color: var(--cor-secundaria);
+      transform: scale(1.05);
+    }
+
+    .button-td:active {
+      transform: scale(0.95);
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-delete {
+      background-color: #e74c3c;
+    }
+
+    .btn-custom {
+      background-color: var(--cor-principal);
+      color: #fff;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 10px 24px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-custom:hover {
+      background-color: var(--cor-secundaria);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    /* Form inline para botão deletar */
+    form.form-inline {
+      display: inline-block;
+      margin: 0;
+      padding: 0;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>CATEGORIAS</h1>
+
+    <table>
+      <thead class="fonth1">
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Cor Tema</th>
+          <th>Ativo</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% categorias.forEach(categoria => { %>
+        <tr>
+          <td><%= categoria.id_categoria %></td>
+          <td><%= categoria.nome_categoria %></td>
+          <td><%= categoria.descricao_categoria %></td>
+          <td><%= categoria.cor_tema %></td>
+          <td><%= categoria.ativo %></td>
+          <td>
+            <button type="button" onclick="editar_formulario(
+              '<%= categoria.id_categoria %>',
+              '<%= categoria.nome_categoria %>',
+              '<%= categoria.descricao_categoria %>',
+              '<%= categoria.cor_tema %>',
+              '<%= categoria.ativo %>'
+            )" class="button-td">Editar</button>
+
+            <form method="post" action="/categorias/deletar_categoria" class="form-inline">
+              <input type="hidden" name="id_categoria" value="<%= categoria.id_categoria %>">
+              <button type="submit" class="button-td btn-delete">Deletar</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <form method="post" action="/categorias/cadastrar_categoria" class="form-principal">
+      <h2 class="fonth1">Cadastrar / Atualizar Categoria</h2>
+
+      <input type="hidden" name="id_categoria" id="id_categoria">
+
+      <label for="nome_categoria">Nome</label>
+      <input type="text" name="nome_categoria" id="nome_categoria" required>
+
+      <label for="descricao_categoria">Descrição da Categoria</label>
+      <textarea name="descricao_categoria" id="descricao_categoria" required></textarea>
+
+      <label for="cor_tema">Cor do tema</label>
+      <input type="text" name="cor_tema" id="cor_tema">
+
+      <label for="ativo">Status</label>
+      <select name="ativo" id="ativo">
+        <option value="1" selected>ativado</option>
+        <option value="0">desativado</option>
+      </select>
+
+      <div class="btn-group">
+        <button type="submit" class="btn-custom" name="action" value="incluir">Cadastrar</button>
+        <button type="submit" class="btn-custom" name="action" value="atualizar">Atualizar</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function editar_formulario(id_categoria, nome_categoria, descricao_categoria, cor_tema, ativo) {
+      document.getElementById("id_categoria").value = id_categoria;
+      document.getElementById("nome_categoria").value = nome_categoria;
+      document.getElementById("descricao_categoria").value = descricao_categoria;
+      document.getElementById("cor_tema").value = cor_tema;
+      document.getElementById("ativo").value = ativo;
+    }
+  </script>
+
+</body>
+</html>

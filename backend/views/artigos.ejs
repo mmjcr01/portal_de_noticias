@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artigos</title>
+  <style>
+    :root {
+      --font-family: 'Archivo', sans-serif;
+      --h1: 800 24px/135% var(--font-family);
+      --text: 400 16px/140% var(--font-family);
+      --cor-principal: #291B1A;
+      --cor-secundaria: #5ca3b3;
+      --cor-fundo: #F0E8C2;
+      --cor-body: #0F172A;
+    }
+  #titulo_artigo   { grid-area: titulo_artigo; }
+  #conteudo_artigo { grid-area: conteudo_artigo; }
+  #id_categoria    { grid-area: id_categoria; }
+  #id_autor        { grid-area: id_autor; }
+  .btn-group       { grid-area: btn-group; }
+
+    body {
+      background-color: var(--cor-body);
+      font-family: Arial, Helvetica, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      border: 1px solid var(--cor-principal);
+      color: var(--cor-principal);
+      padding: 2rem;
+      background-color: var(--cor-fundo);
+      width: 60rem;
+      min-height: 50vh;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 0.8rem;
+    }
+
+    h1 {
+      font: var(--h1);
+      text-align: center;
+      font-size: 2rem;
+    }
+
+    .fonth1 {
+      font: var(--h1);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    table, th, td {
+      border: 1px solid black;
+      padding: 0.5rem;
+      text-align: center;
+      vertical-align: middle;
+      background-color: aliceblue;
+    }
+
+    .button-td {
+      background-color: var(--cor-principal);
+      color: #fff;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      display: inline-block;
+    }
+
+    .button-td:hover {
+      background-color: var(--cor-secundaria);
+      transform: scale(1.05);
+    }
+
+    .button-td:active {
+      transform: scale(0.95);
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-delete {
+      background-color: #e74c3c;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      align-items: center;
+      align-content: center;
+    }
+     
+   .form-principal{
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-areas:
+    "titulo_artigo id_categoria"
+    "conteudo_artigo id_autor"
+    "btn-group btn-group"; 
+    gap: 3rem;
+   align-items: start;
+}
+        
+     
+      .form-principal label {
+        font-weight: bold;
+      }
+      .form-principal input, .form-principal textarea {
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 0.4rem;
+        font-size: 0.9rem;
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 1rem;
+      }
+      .form-principal textarea {
+        resize: vertical;
+        min-height: 8rem;
+        
+      }
+
+
+      
+      select {
+        margin-top: 0.8rem;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 0.4rem;
+        font-size: 0.9rem;
+        width: 100%;
+        box-sizing: border-box;
+      }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    
+    <h2 class="fonth1">Cadastrar / Atualizar Artigo</h2>
+    
+    <main>
+  <form class="form-principal" method="Post" action="/artigos/cadastrar_artigo">
+  <input type="hidden" name="id_artigo" id="id_artigo">
+
+  <div id="titulo_artigo">
+    <label for="titulo_input">Título</label>
+    <input id="titulo_input" type="text" name="titulo_artigo" required>
+  </div>
+
+  <div id="conteudo_artigo">
+    <label for="conteudo_input">Conteúdo</label>
+    <textarea id="conteudo_input" name="conteudo_artigo" required></textarea>
+  </div>
+
+  <div id="id_categoria">
+    <label for="categoria_select">Categoria</label>
+    <select id="categoria_select" name="id_categoria">
+      <option>Selecione uma categoria</option>
+      <% categorias.forEach(categoria => { %>
+        <option value="<%= categoria.id_categoria %>"
+          data-id="<%= categoria.id_categoria %>">
+          <%= categoria.nome_categoria %>
+        </option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div id="id_autor">
+    <label for="autor_select">Autor</label>
+    <select id="autor_select" name="id_autor">
+      <option>Selecione um autor</option>
+      <% autores.forEach(autor => { %>
+        <option value="<%= autor.id_autor %>"
+        data-id="<%= autor.id_autor %>">
+        <%= autor.nome_autor %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="btn-group">
+    <button type="submit" class="button-td" name="action" value="incluir">Cadastrar</button>
+    <button type="submit" class="button-td" name="action" value="atualizar">Atualizar</button>
+  </div>
+</form>
+ 
+</main>
+
+    <h1>ARTIGOS</h1>
+
+    <table>
+      <thead class="fonth1">
+        <tr>
+          <th>ID</th>
+          <th>Título</th>
+          <th>Resumo</th>
+          <th>Imagem</th>
+          <th>Categoria</th>
+          <th>Autor</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% artigos.forEach(artigo => { %>
+        <tr>
+          <td><%= artigo.id_artigo %></td>
+          <td><%= artigo.titulo_artigo %></td>
+          <td><%= artigo.resumo_artigo %></td>
+          <td>
+            <img src="<%= artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>" style="max-width: 100px;">
+          </td>
+          <td><%= artigo.nome_categoria %></td>
+          <td><%= artigo.nome_autor %></td>
+          <td>
+            <button type="button" onclick="editar_formulario(
+              '<%= artigo.id_artigo %>',
+              '<%= artigo.titulo_artigo %>',
+              '<%= artigo.conteudo_artigo %>',
+              '<%= artigo.id_categoria %>',
+              '<%= artigo.id_autor %>'
+            )" class="button-td">Editar</button>
+
+            <form method="post" action="/artigos/deletar_artigo" class="form-inline">
+              <input type="hidden" name="id_artigo" value="<%= artigo.id_artigo %>">
+              <button type="submit" class="button-td btn-delete">Deletar</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+  
+  </div>
+
+  <script>
+    function editar_formulario(id_artigo, titulo_artigo, conteudo_artigo, id_categoria, id_autor) {
+      document.getElementById("id_artigo").value = id_artigo;
+      document.getElementById("titulo_input").value = titulo_artigo;
+      // document.getElementById("resumo_artigo").value = resumo_artigo;
+      document.getElementById("conteudo_input").value = conteudo_artigo;
+      // document.getElementById("alt_imagem").value = alt_imagem;
+      document.getElementById("categoria_select").value = id_categoria;
+      document.getElementById("autor_select").value = id_autor;
+    }
+  </script>
+
+</body>
+</html>

@@ -10,6 +10,8 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(express.static('public'));
+
 
 
 app.use('/autores', routesAutores);
@@ -20,7 +22,7 @@ app.use('/artigos', routesArtigo);
 
 
 app.get('/', (req, res) =>{
-  res.send("Bem-vindo ao Portal de Notícias!");
+  res.render('index');
 });
 
 app.listen(port, () => {

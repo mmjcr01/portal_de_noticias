@@ -96,6 +96,10 @@ a:hover{
 
 .conteudo-artigo{
   font: var(--text);
+  min-height: 15rem;
+  padding: 1rem;
+  text-align: center;
+  
 }
 
 

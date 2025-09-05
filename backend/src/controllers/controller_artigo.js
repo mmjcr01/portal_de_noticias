@@ -53,11 +53,14 @@ exports.listarArtigos = async (req, res) => {
 };
 
 exports.buscar_artigo = (req, res) => {
-  db.query('SELECT * FROM artigos WHERE id_artigo = ?', [req.params.id], (err, results) => {
+  const id = req.params.id; 
+  
+  
+  db.query('SELECT * FROM vw_artigos WHERE id_artigo = ?', [id], (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Erro na consulta ao banco' });
     }
-    res.json(results);
+    res.render('artigo', {artigo: results[0]});
   });
 } 
 
@@ -72,7 +75,7 @@ exports.criar_artigo = (req, res) => {
       console.error('Erro ao criar artigo:', err);
       return res.status(500).json({ error: 'Erro ao criar artigo' });
     }
-    res.redirect('/artigos');
+    res.redirect('/artigos/editar');
   });
 }
 
@@ -87,7 +90,7 @@ exports.atualizar_artigo = (req, res) => {
       console.error('Erro ao atualizar artigo:', err);
       return res.status(500).json({ error: 'Erro ao atualizar artigo' });
     }
-    res.redirect('/artigos');
+    res.redirect('/artigos/editar');
   });
 }
 
@@ -100,6 +103,6 @@ exports.deletar_artigo = (req, res) => {
       console.error('Erro ao deletar artigo:', err);
       return res.status(500).json({ error: 'Erro ao deletar artigo' });
     }
-    res.redirect('/artigos');
+    res.redirect('/artigos/editar');
   });
 }

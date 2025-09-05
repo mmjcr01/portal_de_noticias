@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal de notícias</title>
+  <link rel="stylesheet" href="/css/style_artigo.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+  <header class="container">
+    <nav id="primary"  class="grid grid-flow-col">
+      <div>
+        
+        <img src="/css/assets/icons/List.svg" alt="icone de menu">
+        
+        <a href="/"><strong>Menu</strong></a>
+      </div>
+      
+      <div>
+        <img src="/css/assets/Tech News.svg" alt="TechNews Logo">
+      </div>
+      <div>
+       <a href="/"><strong>Buscar</strong></a>
+        <img src="/css/assets/icons/MagnifyingGlass.svg" alt="icone de busca">
+       
+      </div>
+    </nav> 
+     <nav id="secondary" class="grid grid-flow-col">
+      <a href="#">Inteligência Artificial</a>
+      <a href="#">Blockchain</a>
+      <a href="#">Hologramas</a>
+      <a href="#">Internet</a>
+      <a href="#">Vestíveis</a>
+      <a href="#">Realidade Aumentada</a>
+      <a href="#">Realidade Virtual</a>
+
+    </nav>
+    
+  </header>
+
+  <main class="container">
+   <div class="img-Artigo">
+    <img src="/css/assets/images/Image 01.png" alt="imagem do artigo">
+  
+   </div>
+   <div class="titulo-artigo">
+  <h1 class="text-2xl"><%= artigo.titulo_artigo %></h1>
+  <span class="left">Autor:     
+  <h2 class="text-xl"><%=artigo.nome_autor%></h2>
+   </span> 
+</div>
+ 
+
+<div class="conteudo-artigo">
+ 
+  <p>
+   <%= artigo.conteudo_artigo %>
+   </p>
+</div>
+
+      
+  
+
+   
+  
+
+  </main>
+  <footer class="container">
+    <div>
+      <a href="/">Voltar</a>
+    </div>
+
+
+  </footer>
+
+ 
+  
+</body>
+</html>

@@ -3,3 +3,6 @@ node_modules/
 src.zip
 disciplina (1).ejs
 teste.js
+
+#
+!frontend/

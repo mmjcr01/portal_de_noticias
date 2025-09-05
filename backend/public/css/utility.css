@@ -36,3 +36,7 @@
 .align-items{
   align-items: center;
 }
+
+.left{
+  margin-left: -30px;
+}

@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const controller_artigo = require('../controllers/controller_artigo.js');
 
-
-router.get('/', controller_artigo.listarArtigos);
+router
+router.get('/editar', controller_artigo.listarArtigos);
 router.get('/:id', controller_artigo.buscar_artigo);
 router.post('/cadastrar_artigo', (req, res) => {
   const action = req.body.action;

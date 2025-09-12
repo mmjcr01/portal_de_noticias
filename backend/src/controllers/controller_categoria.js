@@ -6,7 +6,7 @@ exports.listarCategorias = (req, res) => {
       console.error('Erro ao listar categorias:', err);
       return res.status(500).json({ error: 'Erro ao listar categorias' });
     }
-    res.render('categorias', { categorias: results });
+    res.render('categorias_editor', { categorias: results });
   });
 }
 
@@ -31,7 +31,7 @@ exports.criar_categoria = (req, res) => {
       return res.status(500).json({ error: 'Erro ao criar categoria' });
     }
   });
- res.redirect("/categorias")
+ res.redirect("/categorias/editar")
 }
 
 exports.atualizar_categoria = (req, res) => { 
@@ -47,7 +47,7 @@ exports.atualizar_categoria = (req, res) => {
       console.error('Erro ao atualizar categoria:', err);
       return res.status(500).json({ error: 'Erro ao atualizar categoria' });
     }
-    res.redirect("/categorias")
+    res.redirect("/categorias/editar")
   });
  
 }
@@ -59,6 +59,6 @@ exports.deletar_categoria = (req, res) => {
       console.error('Erro ao deletar categoria:', err);
       return res.status(500).json({ error: 'Erro ao deletar categoria' });
     }
-     res.redirect("/categorias")
+     res.redirect("/categorias/editar")
   });
 }

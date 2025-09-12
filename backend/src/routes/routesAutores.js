@@ -3,7 +3,7 @@ const router = express.Router();
 const controllerAutores = require('../controllers/controller_autor.js');
 
 
-router.get('/', controllerAutores.listarAutores);
+router.get('/editar', controllerAutores.listarAutores);
 router.get('/:id', controllerAutores.buscar_autor);
 router.post('/cadastrar_autor', (req, res) => {
   const action = req.body.action;

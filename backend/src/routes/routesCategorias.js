@@ -4,7 +4,7 @@ const controller_categorias = require('../controllers/controller_categoria.js');
 
 
 
-router.get('/', controller_categorias.listarCategorias);
+router.get('/editar', controller_categorias.listarCategorias);
 router.get('/:id_categoria', controller_categorias.buscar_categoria);
 router.post("/cadastrar_categoria", (req, res) =>{
   const action = req.body.action;

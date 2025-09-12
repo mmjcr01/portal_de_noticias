@@ -7,7 +7,7 @@ exports.listarAutores = (req, res) => {
       return res.status(500).json({ error: 'Erro ao listar autores' });
     }
     // res.json(results);
-    res.render('autores',  { autores: results });
+    res.render('autores_editor',  { autores: results });
   });
 }
 
@@ -30,7 +30,7 @@ exports.buscar_autor = (req, res) => {
       }
       // res.status(201).json({ message: 'Autor criado com sucesso', id: results.insertId });
     });
-     res.redirect('/autores');
+     res.redirect('/editar');
   }
 
 
@@ -45,7 +45,8 @@ exports.buscar_autor = (req, res) => {
         console.error('Erro ao atualizar autor:', err);
         return res.status(500).json({ error: 'Erro ao atualizar autor' });
       }
-      res.redirect('/autores');
+     
+      res.redirect('/autores/editar');
     });
   }
 
@@ -58,6 +59,6 @@ exports.deletar_autor = (req, res) => {
       console.error('Erro ao deletar autor:', err);
       return res.status(500).json({ error: 'Erro ao deletar autor' });
     }
-    res.redirect('/autores');
+    res.redirect('/editar');
   });
 }

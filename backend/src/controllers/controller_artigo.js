@@ -45,7 +45,7 @@ exports.listarArtigos = async (req, res) => {
     const categorias = await exports.buscarCategorias();
 
     // Renderizar a view com os dados
-    res.render('artigos', { artigos, autores, categorias });
+    res.render('artigos_editor', { artigos, autores, categorias });
   } catch (err) {
     console.error('Erro ao listar artigos ou autores:', err);
     res.status(500).json({ error: 'Erro ao listar artigos ou autores' });

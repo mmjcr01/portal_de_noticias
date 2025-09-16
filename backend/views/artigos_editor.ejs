@@ -21,6 +21,8 @@
   #alt_imagem      { grid-area: alt_imagem; }
   #imagem_artigo   { grid-area: imagem_artigo; }
   #resumo_artigo   { grid-area: resumo_artigo;}
+  #data_publicacao {grid-area: data_publicacao}
+  #destaque        {grid-area: destaque}
   .btn-group       { grid-area: btn-group; }
 
     body {
@@ -110,10 +112,11 @@
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-template-areas:
-    "titulo_artigo titulo_artigo"
-    "resumo_artigo id_categoria "
-    "conteudo_artigo id_autor"
+    "titulo_artigo id_categoria"
+    "resumo_artigo id_autor "
     "alt_imagem imagem_artigo"
+    "data_publicacao destaque"
+    "conteudo_artigo conteudo_artigo"
     "btn-group btn-group"; 
     gap: 3rem;
    align-items: start;
@@ -177,7 +180,8 @@
     <textarea name="resumo_artigo" id="resumo_artigo_input"></textarea>
     
    </div>
-
+  
+   
   <div id="alt_imagem">
     <label for="alt_imagem_input">Descrição da imagem</label>
     <input type="text" name="alt_imagem" id="alt_imagem_input">
@@ -215,6 +219,19 @@
         <%= autor.nome_autor %></option>
       <% }) %>
     </select>
+  </div>
+
+  <div id="data_publicacao">
+    <label for="data_select">Data publicação</label>
+    <input type="date" id="data_select">
+  </div>
+  
+  <div id="destaque">
+   <label for="destaque_input">Destaque</label>
+   <select name="destaque" id="destaque_input">
+    <option value="1">Ativado</option>
+    <option value="0">Desativado</option>
+   </select>
   </div>
 
   <div class="btn-group">

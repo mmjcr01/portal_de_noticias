@@ -84,8 +84,17 @@ exports.atualizar_artigo = (req, res) => {
   const id_artigo = req.body.id_artigo;
   const titulo_artigo = req.body.titulo_artigo;
   const conteudo_artigo = req.body.conteudo_artigo;
+  const resumo_artigo = req.body.resumo_artigo;
+  const imagem_destaque_artigo = req.body.imagem_destaque_artigo;
+  const alt_imagem = req.body.alt_imagem;
+  const data_publicacao = req.body.data_publicacao;
+  const id_categoria = req.body.id_categoria;
+  const id_autor = req.body.id_autor
+  const destaque = req.body.destaque
 
-  db.query('UPDATE artigos SET titulo_artigo = ?, conteudo_artigo = ? WHERE id_artigo = ?', [titulo_artigo, conteudo_artigo, id_artigo], (err, results) => {
+
+  db.query('UPDATE artigos SET titulo_artigo = ?, resumo_artigo = ?, conteudo_artigo = ?, imagem_destaque_artigo = ?, alt_imagem = ? , id_categoria = ? , id_autor = ? , data_publicacao =  ? ,destaque = ?  WHERE id_artigo = ? ' 
+    [titulo_artigo, resumo_artigo, conteudo_artigo, imagem_destaque_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque, id_artigo], (err, results) => {
     if (err) {
       console.error('Erro ao atualizar artigo:', err);
       return res.status(500).json({ error: 'Erro ao atualizar artigo' });

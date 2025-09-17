@@ -65,12 +65,17 @@ exports.buscar_artigo = (req, res) => {
 } 
 
 exports.criar_artigo = (req, res) => {  
-  const titulo = req.body.titulo_artigo;
+  const titulo_artigo = req.body.titulo_artigo;
   const conteudo_artigo = req.body.conteudo_artigo;
-  const id_autor = req.body.id_autor;
+  const resumo_artigo = req.body.resumo_artigo;
+  const alt_imagem = req.body.alt_imagem;
+  const data_publicacao = req.body.data_publicacao;
   const id_categoria = req.body.id_categoria;
+  const id_autor = req.body.id_autor
+  const destaque = req.body.destaque
 
-  db.query('INSERT INTO `portal_noticias`.`artigos` (`titulo_artigo`, `conteudo_artigo`, `id_autor`, `id_categoria`) VALUES (?, ?, ?, ?)', [titulo, conteudo_artigo, id_autor, id_categoria], (err, results) => {
+  db.query('INSERT INTO `portal_noticias`.`artigos` (titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+    [titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque], (err, results) => {
     if (err) {
       console.error('Erro ao criar artigo:', err);
       return res.status(500).json({ error: 'Erro ao criar artigo' });
@@ -85,7 +90,6 @@ exports.atualizar_artigo = (req, res) => {
   const titulo_artigo = req.body.titulo_artigo;
   const conteudo_artigo = req.body.conteudo_artigo;
   const resumo_artigo = req.body.resumo_artigo;
-  const imagem_destaque_artigo = req.body.imagem_destaque_artigo;
   const alt_imagem = req.body.alt_imagem;
   const data_publicacao = req.body.data_publicacao;
   const id_categoria = req.body.id_categoria;
@@ -93,8 +97,8 @@ exports.atualizar_artigo = (req, res) => {
   const destaque = req.body.destaque
 
 
-  db.query('UPDATE artigos SET titulo_artigo = ?, resumo_artigo = ?, conteudo_artigo = ?, imagem_destaque_artigo = ?, alt_imagem = ? , id_categoria = ? , id_autor = ? , data_publicacao =  ? ,destaque = ?  WHERE id_artigo = ? ' 
-    [titulo_artigo, resumo_artigo, conteudo_artigo, imagem_destaque_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque, id_artigo], (err, results) => {
+  db.query('UPDATE artigos SET titulo_artigo = ?, resumo_artigo = ?, conteudo_artigo = ?, alt_imagem = ? , id_categoria = ? , id_autor = ? , data_publicacao =  ? ,destaque = ?  WHERE id_artigo = ? ', 
+    [titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque, id_artigo], (err, results) => {
     if (err) {
       console.error('Erro ao atualizar artigo:', err);
       return res.status(500).json({ error: 'Erro ao atualizar artigo' });

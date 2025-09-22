@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const controller_artigo = require('../controllers/controller_artigo.js');
+const uploadArquivo = controller_artigo.uploadArquivo
+
 
 
 router.get('/editar', controller_artigo.listarArtigos);
 router.get('/:id', controller_artigo.buscar_artigo);
-router.post('/cadastrar_artigo', (req, res) => {
+router.post('/cadastrar_artigo', uploadArquivo.single("imagem_artigo"), (req, res) => {
+   console.log('Arquivo recebido:', req.file); // Verifique se o arquivo está sendo recebido
   const action = req.body.action;
 
   if (action === 'incluir') {

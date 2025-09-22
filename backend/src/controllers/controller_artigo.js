@@ -1,4 +1,25 @@
 const db = require('../database/db.js');
+const multer = require("multer");
+const path = require('path');
+
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, '../../public/css/assets/images'));
+  },
+  filename: function (req, file, cb) {
+    const alt_imagem = req.body.alt_imagem || Date.now() + '-' + file.originalname;
+    cb(null, alt_imagem)
+  }
+})
+
+const uploadArquivo = multer({storage: storage});
+exports.uploadArquivo = uploadArquivo;
+
+
+
+
 
 // Função para buscar categorias
 exports.buscarCategorias = () => {
@@ -28,6 +49,7 @@ exports.buscarAutores = () => {
 
 // Função para listar artigos
 exports.listarArtigos = async (req, res) => {
+  const base_imagem = "/css/assets/images/"
   try {
     // Buscar artigos
     const artigos = await new Promise((resolve, reject) => {
@@ -45,7 +67,7 @@ exports.listarArtigos = async (req, res) => {
     const categorias = await exports.buscarCategorias();
 
     // Renderizar a view com os dados
-    res.render('artigos_editor', { artigos, autores, categorias });
+    res.render('artigos_editor', { artigos, autores, categorias, base_imagem: base_imagem  });
   } catch (err) {
     console.error('Erro ao listar artigos ou autores:', err);
     res.status(500).json({ error: 'Erro ao listar artigos ou autores' });
@@ -73,19 +95,22 @@ exports.criar_artigo = (req, res) => {
   const id_categoria = req.body.id_categoria;
   const id_autor = req.body.id_autor
   const destaque = req.body.destaque
+  const imagem_destaque_artigo = req.body.imagem_artigo
 
-  db.query('INSERT INTO `portal_noticias`.`artigos` (titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
-    [titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque], (err, results) => {
+  db.query('INSERT INTO `portal_noticias`.`artigos` (titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque, imagem_destaque_artigo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+    [titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque, imagem_destaque_artigo], (err, results) => {
     if (err) {
       console.error('Erro ao criar artigo:', err);
       return res.status(500).json({ error: 'Erro ao criar artigo' });
     }
+    
     res.redirect('/artigos/editar');
   });
 }
 
 
 exports.atualizar_artigo = (req, res) => {
+  console.log(res);
   const id_artigo = req.body.id_artigo;
   const titulo_artigo = req.body.titulo_artigo;
   const conteudo_artigo = req.body.conteudo_artigo;
@@ -95,10 +120,11 @@ exports.atualizar_artigo = (req, res) => {
   const id_categoria = req.body.id_categoria;
   const id_autor = req.body.id_autor
   const destaque = req.body.destaque
+  const imagem_destaque_artigo = req.body.imagem_artigo
 
 
-  db.query('UPDATE artigos SET titulo_artigo = ?, resumo_artigo = ?, conteudo_artigo = ?, alt_imagem = ? , id_categoria = ? , id_autor = ? , data_publicacao =  ? ,destaque = ?  WHERE id_artigo = ? ', 
-    [titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque, id_artigo], (err, results) => {
+  db.query('UPDATE artigos SET titulo_artigo = ?, resumo_artigo = ?, conteudo_artigo = ?, alt_imagem = ? , id_categoria = ? , id_autor = ? , data_publicacao =  ? ,destaque = ?, imagem_destaque_artigo = ?  WHERE id_artigo = ? ', 
+    [titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque, imagem_destaque_artigo, id_artigo], (err, results) => {
     if (err) {
       console.error('Erro ao atualizar artigo:', err);
       return res.status(500).json({ error: 'Erro ao atualizar artigo' });
@@ -119,3 +145,5 @@ exports.deletar_artigo = (req, res) => {
     res.redirect('/artigos/editar');
   });
 }
+
+

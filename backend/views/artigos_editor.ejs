@@ -167,7 +167,7 @@
     <h2 class="fonth1">Cadastrar / Atualizar Artigo</h2>
     
     <main>
-  <form class="form-principal" method="Post" action="/artigos/cadastrar_artigo">
+  <form class="form-principal" method="Post" action="/artigos/cadastrar_artigo" enctype="multipart/form-data">
   <input type="hidden" name="id_artigo" id="id_artigo">
 
   <div id="titulo_artigo">
@@ -188,7 +188,7 @@
   </div>
   <div id="imagem_artigo">
     <label for="imagem_artigo_input">Arquivo da imagem</label>
-    <input type="file" name="imagem_artigo" id="imagem_artigo_input">
+    <input type="file" name="imagem_artigo"  id="imagem_artigo_input">
   </div>
 
   <div id="conteudo_artigo">
@@ -265,7 +265,7 @@
           <td><%= artigo.resumo_artigo %></td>
           <td><%= artigo.conteudo_artigo %></td>
           <td>
-            <img src="<%= artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>" style="max-width: 100px;">
+            <img src="<%=base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>" style="max-width: 100px;">
           </td>
           <td><%= artigo.nome_categoria %></td>
           <td><%= artigo.nome_autor %></td>

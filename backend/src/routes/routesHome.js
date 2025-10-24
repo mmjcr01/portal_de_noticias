@@ -3,7 +3,7 @@ const router = express.Router();
 const controller_home = require("../controllers/controller_home.js");
 
 
-router.get("/", controller_home.listarCategorias);
+router.get("/", controller_home.listarArtigos);
 
 
 

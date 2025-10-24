@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="PT-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuários</title>
+  <link rel="stylesheet" href="/css/usuarios_editor.css">
+
+</head>
+<body>
+  <div class="container">
+    <h2 class="fonth1">Cadastrar / Atualizar Usuário</h2>
+    <main>
+      <form class="form-principal" method="POST" action="/usuarios/cadastrar_usuario">
+          <input type="hidden" name="id_usuario" id="id_usuario">
+
+          <div id="nome_usuario">
+            <label for="nome_usuario_input">Nome</label>
+            <input id="nome_usuario_input" type="text" name="nome_usuario" required>
+          </div>
+
+          <div id="senha_usuario">
+            <label for="senha_usuario_input">Senha</label>
+            <input id="senha_usuario_input" type="password" name="senha_usuario" required>
+          </div>
+
+          <div id="email_usuario">
+            <label for="email_usuario_input">Email</label>
+            <input id="email_usuario_input" type="email" name="email_usuario" required>
+          </div>
+
+          <div id="admin_usuario">
+            <label for="admin_usuario_select">Admin</label>
+            <select id="admin_usuario_select" name="admin_usuario">
+              <option value="1">Sim</option>
+              <option value="0">Não</option>
+            </select>
+          </div>
+
+          <div class="btn-group">
+            <button type="submit" class="button-td" name="action" value="incluir">Cadastrar</button>
+            <button type="submit" class="button-td" name="action" value="atualizar">Atualizar</button>
+          </div>
+</form>
+    </main>
+
+    <h1>USUÁRIOS</h1>
+
+    <table>
+      <thead class="fonth1">
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Senha</th>
+          <th>Admin</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% usuarios.forEach(usuario => { %>
+        <tr>
+          <td><%= usuario.id_usuario %></td>
+          <td><%= usuario.nome_usuario %></td>
+          <td><%= usuario.email_usuario %></td>
+          <td><%= usuario.senha_usuario %></td>
+          <td><%= usuario.admin_usuario === 1 ? 'Sim' : 'Não' %></td>
+          <td>
+            <button type="button" onclick="editar_formulario(
+              '<%= usuario.id_usuario %>',
+              '<%= usuario.nome_usuario %>',
+              '<%= usuario.email_usuario %>',
+              '<%= usuario.senha_usuario %>',
+              '<%= usuario.admin_usuario %>'
+            )" class="button-td">Editar</button>
+
+            <form method="POST" action="/usuarios/deletar_usuario" class="form-inline">
+              <input type="hidden" name="id_usuario" value="<%= usuario.id_usuario %>">
+              <button type="submit" class="button-td btn-delete">Deletar</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function editar_formulario(id_usuario, nome_usuario, email_usuario, senha_usuario, admin_usuario) {
+      document.getElementById("id_usuario").value = id_usuario;
+      document.getElementById("nome_usuario_input").value = nome_usuario;
+      document.getElementById("email_usuario_input").value = email_usuario;
+      document.getElementById("senha_usuario_input").value = senha_usuario;
+      document.getElementById("admin_usuario_select").value = admin_usuario;
+    }
+  </script>
+</body>
+</html>

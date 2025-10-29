@@ -4,45 +4,62 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal de notícias</title>
-  <link rel="stylesheet" href="/css/style_artigo.css">
+  <link rel="stylesheet" href="/css/artigo.css">
+  <link rel="stylesheet" href="/css/index.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
   <header class="container">
-    <nav id="primary"  class="grid grid-flow-col">
+  <nav id="primary" class="grid grid-flow-col">
+    <!-- Botão Menu -->
+    <a href="#" id="menu-btn">
       <div>
-        
         <img src="/css/assets/icons/List.svg" alt="icone de menu">
-        
-        <a href="/"><strong>Menu</strong></a>
+        <strong>Menu</strong>
       </div>
-      
-      <div>
-        <img src="/css/assets/Tech News.svg" alt="TechNews Logo">
-      </div>
-      <div>
-       <a href="/"><strong>Buscar</strong></a>
-        <img src="/css/assets/icons/MagnifyingGlass.svg" alt="icone de busca">
-       
-      </div>
-    </nav> 
-     <nav id="secondary" class="grid grid-flow-col">
-      <a href="#">Inteligência Artificial</a>
-      <a href="#">Blockchain</a>
-      <a href="#">Hologramas</a>
-      <a href="#">Internet</a>
-      <a href="#">Vestíveis</a>
-      <a href="#">Realidade Aumentada</a>
-      <a href="#">Realidade Virtual</a>
+    </a>
 
-    </nav>
+    <!-- Logo -->
+    <div>
+      <img src="/css/assets/Tech News.svg" alt="TechNews Logo">
+    </div>
+
+    <!-- Botão Buscar -->
+    <div class="end" id="search-btn">
+      <a href="#"><strong>Buscar</strong></a>
+      <img src="/css/assets/icons/MagnifyingGlass.svg" alt="icone de busca">
+    </div>
+  </nav>
+
+  <!-- Menu dropdown -->
+  <div class="menu-dropdown hidden">
+    <ul>
+  <li><a href="/">Início</a></li>
+
+  <% if (login) { %>
+    <li><a href="#">Olá, <%= login.nome_usuario %></a></li>
+  <% } else { %>
+    <li><a href="/login">Fazer login</a></li>
+  <% } %>
+  <li><a href="#">Contato</a></li>
+  <li><a href="/login/logout">Sair</a></li>
+  </ul>
+  </div>
+
+  <!-- Campo de busca -->
+  <div class="search-bar hidden">
+    <form action="/buscar_artigos" method="post">
+    <input type="text"   name="busca" placeholder="Digite sua busca...">
+    <button class="btn-buscar" type="submit">Buscar</button>
+    </form>
+  </div>
     
   </header>
 
   <main class="container">
    <div class="img-Artigo">
-    <img src="/css/assets/images/Image 01.png" alt="imagem do artigo">
+    <img src="<%=base_imagem + artigo.imagem_destaque_artigo %> " alt="<%= artigo.titulo_artigo %>">
   
    </div>
    <div class="titulo-artigo">
@@ -60,22 +77,12 @@
    </p>
 </div>
 
-      
-  
-
-   
-  
-
   </main>
   <footer class="container">
     <div>
       <a href="/">Voltar</a>
     </div>
-
-
   </footer>
-
- 
-  
+  <script src="/js/menuInterativo.js"></script>
 </body>
 </html>

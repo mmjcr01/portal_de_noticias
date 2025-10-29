@@ -2,21 +2,27 @@ const db = require('../database/db.js');
 const multer = require("multer");
 const path = require('path');
 
-
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, '../../public/css/assets/images'));
   },
   filename: function (req, file, cb) {
-    const alt_imagem = req.body.alt_imagem || Date.now() + '-' + file.originalname;
-    cb(null, alt_imagem)
+    const ext = path.extname(file.originalname); // .jpg, .png, etc.
+    const baseName = path.basename(file.originalname, ext)
+      .normalize("NFD") // remove acentos
+      .replace(/[\u0300-\u036f]/g, "") // remove caracteres especiais
+      .replace(/[^a-zA-Z0-9-_]/g, "_") // troca espaços e símbolos por "_"
+      .toLowerCase();
+
+    // Gera algo como: artigo-1729962945920.png
+    const nomeSeguro = `${baseName}-${Date.now()}${ext}`;
+
+    cb(null, nomeSeguro);
   }
-})
+});
 
-const uploadArquivo = multer({storage: storage});
+const uploadArquivo = multer({ storage });
 exports.uploadArquivo = uploadArquivo;
-
 
 
 
@@ -24,7 +30,7 @@ exports.uploadArquivo = uploadArquivo;
 // Função para buscar categorias
 exports.buscarCategorias = () => {
   return new Promise((resolve, reject) => {
-    db.query('SELECT * FROM categorias', (err, results) => {
+    db.query('SELECT * FROM categorias order by nome_categoria', (err, results) => {
       if (err) {
         console.error('Erro ao listar categorias:', err);
         return reject(err);
@@ -49,11 +55,11 @@ exports.buscarAutores = () => {
 
 // Função para listar artigos
 exports.listarArtigos = async (req, res) => {
-  const base_imagem = "/css/assets/images/"
+  const base_imagem = "/css/assets/images/";
   try {
     // Buscar artigos
     const artigos = await new Promise((resolve, reject) => {
-      db.query('SELECT * FROM vw_artigos;', (err, results) => {
+      db.query('SELECT * FROM vw_artigos order by nome_categoria', (err, results) => {
         if (err) {
           console.error('Erro ao listar artigos:', err);
           return reject(err);
@@ -74,17 +80,20 @@ exports.listarArtigos = async (req, res) => {
   }
 };
 
+
 exports.buscar_artigo = (req, res) => {
   const id = req.params.id; 
+  const base_imagem = "/css/assets/images/";
   
   
   db.query('SELECT * FROM vw_artigos WHERE id_artigo = ?', [id], (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Erro na consulta ao banco' });
     }
-    res.render('artigo', {artigo: results[0]});
+    res.render('artigo', {login: req.session.user|| null ,artigo: results[0], base_imagem});
   });
 } 
+
 
 exports.criar_artigo = (req, res) => {  
   const titulo_artigo = req.body.titulo_artigo;
@@ -95,7 +104,9 @@ exports.criar_artigo = (req, res) => {
   const id_categoria = req.body.id_categoria;
   const id_autor = req.body.id_autor
   const destaque = req.body.destaque
-  const imagem_destaque_artigo = req.body.imagem_artigo
+  const imagem_destaque_artigo = req.file ? req.file.filename : req.body.imagem_destaque_artigo;
+
+  
 
   db.query('INSERT INTO `portal_noticias`.`artigos` (titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque, imagem_destaque_artigo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
     [titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque, imagem_destaque_artigo], (err, results) => {
@@ -110,7 +121,6 @@ exports.criar_artigo = (req, res) => {
 
 
 exports.atualizar_artigo = (req, res) => {
-  console.log(res);
   const id_artigo = req.body.id_artigo;
   const titulo_artigo = req.body.titulo_artigo;
   const conteudo_artigo = req.body.conteudo_artigo;
@@ -120,7 +130,8 @@ exports.atualizar_artigo = (req, res) => {
   const id_categoria = req.body.id_categoria;
   const id_autor = req.body.id_autor
   const destaque = req.body.destaque
-  const imagem_destaque_artigo = req.body.imagem_artigo
+  const imagem_destaque_artigo = req.file ? req.file.filename : req.body.imagem_destaque_artigo;
+
 
 
   db.query('UPDATE artigos SET titulo_artigo = ?, resumo_artigo = ?, conteudo_artigo = ?, alt_imagem = ? , id_categoria = ? , id_autor = ? , data_publicacao =  ? ,destaque = ?, imagem_destaque_artigo = ?  WHERE id_artigo = ? ', 

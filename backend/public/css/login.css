@@ -1,0 +1,136 @@
+@import url(nav.css);
+
+
+:root{
+  --brand-color-light: #60A5FA;
+  --brand-color-dark: #1D4ED8;
+  --bg-color: #0F172A;
+  --stroke-color: #1E293B;
+  --text-color-primary: #f1f5f9;
+  --text-color-secondary: #CBD5E1;
+  --font-family: 'Archivo', sans-serif;
+  --h1: 800 24px/135% var(--font-family);
+  --h2: 800 16px/140% var(--font-family);
+  --h3: 800 14px/140% var(--font-family);
+  --text-span: 600 14px/145% var(--font-family);
+  --text: 400 16px/140% var(--font-family);
+  --text-sm: 400 14px/160% var(--font-family);  
+
+}
+
+body{
+  margin: 0;
+  padding: 0;
+
+}
+.container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-color);
+  height: 100vh;
+  
+  
+
+}
+
+main{
+  margin-bottom:  6rem;
+  overflow: auto;
+  h2{
+    font: var(--h1);
+    border-bottom: 2px solid var(--stroke-color);
+    margin-left: 5px;
+    
+  }
+  
+}
+.formulario{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9f9f9;
+  height: 100%; 
+  width: 38rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+}
+
+
+form{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+
+  label{
+    font: var(--text-span);
+    color: #0F172A;
+  }
+  input{
+    width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  }
+
+}
+
+
+.formulario button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #5796e3;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.formulario button:hover {
+  background: #4178be;
+}
+
+
+a{
+  text-decoration: none;
+  color: var(--text);
+}
+
+a:hover{
+    color: blue;
+  }
+
+
+
+ .checkbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.checkbox label {
+  font: var(--text-span);
+  color: #0F172A;
+  cursor: pointer;
+  text-align: center;
+}
+
+.checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}

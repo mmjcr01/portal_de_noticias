@@ -1,0 +1,114 @@
+header{
+  position: relative;
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: 70px;
+  left: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.menu-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu-dropdown li {
+  margin: 8px 0;
+}
+
+.menu-dropdown a {
+  color: #0F172A;
+  font: var(--text-span);
+  text-decoration: none;
+}
+
+.menu-dropdown a:hover {
+  color: var(--brand-color-dark);
+}
+
+/* --- CAMPO DE BUSCA --- */
+.search-bar {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.search-bar input {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font: var(--text-sm);
+  width: 200px;
+  outline: none;
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
+}
+
+.menu-dropdown:not(.hidden),
+.search-bar:not(.hidden) {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+
+.btn-buscar{
+  border-radius: 8px;
+  background-color: #60A5FA;
+  width: 50px;
+  padding: 5px;
+  box-sizing: border-box;
+  border: none;
+  color: white;
+
+}
+
+.grid{
+  display: grid;
+}
+
+.grid-flow-col{
+  grid-auto-flow: column;
+}
+
+#secondary{
+  padding: 1rem;
+}
+
+ #primary{
+  padding-block: 20px;
+  /*nesting css*/
+  div:nth-child(1){
+    display: flex;
+    align-self: center;
+    gap: 10px;
+  }
+  div:nth-child(2){
+    margin-inline: auto;
+    
+  }
+   div:nth-child(3){
+    justify-self: end;
+    display: flex;
+    align-items:center;
+    gap: 10px;
+   }
+}

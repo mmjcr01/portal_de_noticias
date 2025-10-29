@@ -28,7 +28,7 @@ body {
   color: var(--cor-principal);
   padding: 2rem;
   background-color: var(--cor-fundo);
-  width: 60rem;
+  width: 90%;
   min-height: 50vh;
   display: flex;
   flex-direction: column;

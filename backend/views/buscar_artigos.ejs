@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="PT-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/index.css">
+  <link rel="stylesheet" href="/css/buscar_artigos.css">
+  <title>Portal de notícias</title>
+</head>
+
+<body>
+  <header class="container">
+    <nav id="primary" class="grid grid-flow-col">
+      <!-- Botão Menu -->
+      <a href="#" id="menu-btn">
+        <div>
+          <img src="/css/assets/icons/List.svg" alt="icone de menu">
+          <strong>Menu</strong>
+        </div>
+      </a>
+
+      <!-- Logo -->
+      <div>
+        <img src="/css/assets/Tech News.svg" alt="TechNews Logo">
+      </div>
+
+      <!-- Botão Buscar -->
+      <div class="end" id="search-btn">
+        <a href="#"><strong>Buscar</strong></a>
+        <img src="/css/assets/icons/MagnifyingGlass.svg" alt="icone de busca">
+      </div>
+    </nav>
+
+    <!-- Menu dropdown -->
+    <div class="menu-dropdown hidden">
+      <ul>
+        <li><a href="/">Início</a></li>
+        <% if (login) { %>
+          <li><a href="#">Olá, <%= login.nome_usuario %></a></li>
+        <% } else { %>
+          <li><a href="/login">Fazer login</a></li>
+        <% } %>
+        <li><a href="#">Contato</a></li>
+        <li><a href="/login/logout">Sair</a></li>
+      </ul>
+    </div>
+
+   <div class="search-bar hidden">
+    <form action="/buscar_artigos" method="post">
+    <input type="text"   name="busca" placeholder="Digite sua busca...">
+    <button class="btn-buscar" type="submit">Buscar</button>
+    </form>
+  </div>
+
+
+  </header>
+
+  <main class="container">
+    <section id="resultados-busca">
+      <h1>Resultados da Busca</h1>
+      <p>Exibindo artigos relacionados à palavra-chave: "<%= palavra_chave %>"</p>
+
+  
+    <div class="grid gap-32 border-bottom">
+
+      <% artigos.forEach(artigo => { %>
+        <article class="grid grid-flow-col gap-16">
+          <a href="#">
+          <div class="conteudo">
+            <h2 class="text-lg font-semibold"><%= artigo.titulo_artigo %></h2>
+            <p class="text-sm"><%= artigo.resumo_artigo %></p>
+          </div>
+          </a>
+          <div >
+            <img src="<%=base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>" style="width: 400px;">
+          </div>
+          
+        </article>
+
+      <% }) %>
+    </div>
+  
+</section>
+  
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Portal de Notícias</p>
+  </footer>
+
+  <script src="/js/menuInterativo.js"></script>
+</body>
+</html>

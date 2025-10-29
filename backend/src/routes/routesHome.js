@@ -4,6 +4,7 @@ const controller_home = require("../controllers/controller_home.js");
 
 
 router.get("/", controller_home.listarArtigos);
+router.post("/buscar_artigos", controller_home.buscarArtigos);
 
 
 

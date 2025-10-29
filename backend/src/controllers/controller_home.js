@@ -1,22 +1,4 @@
-
 const db = require('../database/db.js');
-
-const controller_artigo = require("./controller_artigo.js");
-
-
-
-// exports.listarCategorias = (req, res) => {
-//   const base_imagem = "/css/assets/images/"
-
-//   db.query('SELECT * FROM categorias', (err, results) => {
-//     if (err) {
-//       console.error('Erro ao listar categorias:', err);
-//       return res.status(500).json({ error: 'Erro ao listar categorias' });
-//     }
-//     res.render('teste', {base_imagem: base_imagem, categorias: results});
-//   });
-// }
-
 
 
 // Função para buscar categorias
@@ -71,7 +53,7 @@ exports.listarArtigos = async (req, res) => {
     const artigos_destaque = await exports.listarArtigosDestaque(req, res);
     const categorias = await exports.buscarCategorias();
     // Renderizar a view com os dados
-    res.render("index", { artigos, artigos_destaque, categorias, base_imagem });
+    res.render("index", { login: req.session.user|| null, artigos, artigos_destaque, categorias, base_imagem });
   } catch (err) {
     console.error('Erro ao listar artigos ou autores:', err);
     res.status(500).json({ error: 'Erro ao listar artigos ou autores' });
@@ -98,3 +80,20 @@ exports.buscar_artigo_por_categoria = async (req, res) => {
     res.status(500).json({ error: 'Erro ao listar artigos' });
   }
 } 
+
+
+
+exports.buscarArtigos = (req,res) => {
+  const busca = req.body.busca;
+  const base_imagem = "/css/assets/images/";
+  
+  db.query('select * from artigos where resumo_artigo like CONCAT("%", ?, "%");', [busca], (err, results) =>{
+  if (err) {
+      console.error('Erro ao listar artigos:', err);
+      return reject(err);
+  }
+  console.log(results[0]);
+  res.render("buscar_artigos", {login: req.session.user|| null, artigos: results, palavra_chave: busca, base_imagem});
+});
+};
+  

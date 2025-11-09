@@ -6,9 +6,9 @@ const uploadArquivo = controller_artigo.uploadArquivo
 
 
 router.get('/editar', controller_artigo.listarArtigos);
-router.get('/:id', controller_artigo.buscar_artigo);
+router.get('/:id_artigo', controller_artigo.buscar_artigo);
+router.get('/', controller_artigo.cadastro)
 router.post('/cadastrar_artigo', uploadArquivo.single("imagem_destaque_artigo"), (req, res) => {
-   console.log('Arquivo recebido:', req.file); // Verifique se o arquivo está sendo recebido
   const action = req.body.action;
 
   if (action === 'incluir') {

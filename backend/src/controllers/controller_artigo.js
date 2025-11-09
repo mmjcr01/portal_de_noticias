@@ -86,7 +86,6 @@ exports.buscar_artigo = (req, res) => {
   const id_artigo = req.params.id_artigo;
   const base_imagem = "/css/assets/images/";
   const login = req.session.user;
-  console.log(login.id_usuario)
  
 
 

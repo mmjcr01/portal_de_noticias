@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Artigos</title>
+  <title>Portal de notícias</title>
   <style>
     :root {
       --font-family: 'Archivo', sans-serif;
@@ -40,7 +40,7 @@
       color: var(--cor-principal);
       padding: 2rem;
       background-color: var(--cor-fundo);
-      width: 60rem;
+      width: 90%;
       min-height: 50vh;
       display: flex;
       flex-direction: column;
@@ -166,7 +166,7 @@
     
     <h2 class="fonth1">Cadastrar / Atualizar Artigo</h2>
     
-    <main>
+  <main>
   <form class="form-principal" method="Post" action="/artigos/cadastrar_artigo" enctype="multipart/form-data">
   <input type="hidden" name="id_artigo" id="id_artigo">
 
@@ -188,7 +188,7 @@
   </div>
   <div id="imagem_artigo">
     <label for="imagem_artigo_input">Arquivo da imagem</label>
-    <input type="file" name="imagem_artigo"  id="imagem_artigo_input">
+    <input type="file" name="imagem_destaque_artigo"  id="imagem_artigo_input">
   </div>
 
   <div id="conteudo_artigo">
@@ -229,7 +229,9 @@
   <div id="destaque">
    <label for="destaque_input">Destaque</label>
    <select name="destaque" id="destaque_input">
-    <option value="1">Ativado</option>
+    <option value="1">Destaque</option>
+    <option value="2">Subdestaque</option>
+    
     <option value="0">Desativado</option>
    </select>
   </div>

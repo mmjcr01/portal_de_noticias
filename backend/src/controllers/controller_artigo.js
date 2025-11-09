@@ -1,6 +1,7 @@
 const db = require('../database/db.js');
 const multer = require("multer");
 const path = require('path');
+const sessaoUsuarioController = require('./controler_sessaoUsuario.js');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -82,15 +83,32 @@ exports.listarArtigos = async (req, res) => {
 
 
 exports.buscar_artigo = (req, res) => {
-  const id = req.params.id; 
+  const id_artigo = req.params.id_artigo;
   const base_imagem = "/css/assets/images/";
-  
-  
-  db.query('SELECT * FROM vw_artigos WHERE id_artigo = ?', [id], (err, results) => {
+  const login = req.session.user;
+  console.log(login.id_usuario)
+ 
+
+
+  db.query('SELECT * FROM vw_artigos WHERE id_artigo = ?', [id_artigo], (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Erro na consulta ao banco' });
-    }
-    res.render('artigo', {login: req.session.user|| null ,artigo: results[0], base_imagem});
+    };
+    if (!results[0]) {
+      return res.status(404).send('Artigo não encontrado');
+    };
+    if (login) {
+      const id_usuario = login.id_usuario;
+      const id_categoria = results[0].id_categoria;
+      sessaoUsuarioController.artigoClicado(id_usuario, id_artigo, id_categoria);
+    };
+    res.render('artigo', {
+      login: login || null,
+      artigo: results[0], // Envia o primeiro resultado como `artigo`
+      base_imagem,
+    });
+
+  
   });
 } 
 
@@ -156,5 +174,10 @@ exports.deletar_artigo = (req, res) => {
     res.redirect('/artigos/editar');
   });
 }
+
+exports.cadastro = (req, res) =>{
+  res.render("cadastro_artigo", {login: req.session.user})
+
+};
 
 

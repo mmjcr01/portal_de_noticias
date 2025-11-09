@@ -80,10 +80,11 @@ exports.loginAutenticacao = (req, res) => {
 
       // Só se a senha estiver correta
       req.session.user = {
-        id: results[0].id_usuario,
+        id_usuario: results[0].id_usuario,
         nome_usuario: results[0].nome_usuario,
         email_usuario: results[0].email_usuario,
-        admin_usuario: results[0].senha_usuario,
+        senha_usuario: results[0].senha_usuario,
+        admin_usuario: results[0].admin_usuario
       };
       res.redirect("/");
     });

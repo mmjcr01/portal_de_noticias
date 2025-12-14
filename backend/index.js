@@ -1,3 +1,10 @@
+/**
+ * Portal de Notícias - Servidor Express
+ * - Configura o mecanismo de views (EJS)
+ * - Habilita parsers de corpo (urlencoded/json)
+ * - Define a pasta estática `public` para servir arquivos (CSS, JS, imagens)
+ * - Registra rotas principais: autores, categorias, artigos e home
+ */
 const session = require("express-session")
 const express = require('express');
 const app = express();
@@ -18,22 +25,10 @@ app.use(session({
   saveUninitialized: false
 }));
 
-
-
-
-
-
-
-
-
-
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
-
-
-
 app.use('/autores', routesAutores);
 app.use('/categorias', routesCategorias);
 app.use('/artigos', routesArtigos);

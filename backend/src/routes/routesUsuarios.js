@@ -1,3 +1,9 @@
+/**
+ * Rotas Usuários
+ * GET /editar  -> buscarUsuarios
+ * POST /cadastrar_usuario -> incluir/atualizar por `action`
+ * POST /deletar_usuario -> deletar usuário
+ */
 const express = require('express');
 const router = express.Router();
 const controller_usuario = require('../controllers/controller_usuario.js');

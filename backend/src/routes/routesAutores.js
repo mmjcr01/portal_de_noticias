@@ -1,3 +1,10 @@
+/**
+ * Rotas Autores
+ * GET /editar  -> listarAutores
+ * GET /:id     -> buscar_autor
+ * POST /cadastrar_autor -> incluir/atualizar por `action`
+ * POST /deletar -> deletar autor
+ */
 const express = require('express');
 const router = express.Router();
 const controllerAutores = require('../controllers/controller_autor.js');

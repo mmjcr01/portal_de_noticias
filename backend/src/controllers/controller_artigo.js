@@ -1,3 +1,12 @@
+/**
+ * Controller Artigo
+ * Responsável por CRUD de artigos e upload de imagem de destaque.
+ * Upload:
+ * - Configura `multer` com storage em `/public/css/assets/images`
+ * - Gera nome de arquivo seguro baseado no nome original + timestamp
+ * Exporta:
+ * - uploadArquivo: instância do multer para uso nas rotas (ex.: uploadArquivo.single('campo'))
+ */
 const db = require('../database/db.js');
 const multer = require("multer");
 const path = require('path');
@@ -22,6 +31,10 @@ const storage = multer.diskStorage({
   }
 });
 
+/**
+ * Instância do multer com storage configurado.
+ * Use nas rotas: uploadArquivo.single('imagem_destaque_artigo')
+ */
 const uploadArquivo = multer({ storage });
 exports.uploadArquivo = uploadArquivo;
 
@@ -29,6 +42,10 @@ exports.uploadArquivo = uploadArquivo;
 
 
 // Função para buscar categorias
+/**
+ * Lista todas as categorias ordenadas por nome.
+ * @returns {Promise<Array>} categorias
+ */
 exports.buscarCategorias = () => {
   return new Promise((resolve, reject) => {
     db.query('SELECT * FROM categorias order by nome_categoria', (err, results) => {
@@ -42,6 +59,10 @@ exports.buscarCategorias = () => {
 };
 
 // Função para buscar autores
+/**
+ * Lista todos os autores.
+ * @returns {Promise<Array>} autores
+ */
 exports.buscarAutores = () => {
   return new Promise((resolve, reject) => {
     db.query('SELECT * FROM autores', (err, results) => {
@@ -55,6 +76,11 @@ exports.buscarAutores = () => {
 };
 
 // Função para listar artigos
+/**
+ * Renderiza o editor de artigos com lista de artigos, autores e categorias.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.listarArtigos = async (req, res) => {
   const base_imagem = "/css/assets/images/";
   try {
@@ -81,7 +107,11 @@ exports.listarArtigos = async (req, res) => {
   }
 };
 
-
+/**
+ * Exibe a página de um artigo específico e registra acesso do usuário (se logado).
+ * @param {import('express').Request} req - req.params.id_artigo
+ * @param {import('express').Response} res
+ */
 exports.buscar_artigo = (req, res) => {
   const id_artigo = req.params.id_artigo;
   const base_imagem = "/css/assets/images/";
@@ -111,7 +141,11 @@ exports.buscar_artigo = (req, res) => {
   });
 } 
 
-
+/**
+ * Cria um novo artigo.
+ * @param {import('express').Request} req - req.file.filename (imagem), campos do body
+ * @param {import('express').Response} res
+ */
 exports.criar_artigo = (req, res) => {  
   const titulo_artigo = req.body.titulo_artigo;
   const conteudo_artigo = req.body.conteudo_artigo;
@@ -136,7 +170,11 @@ exports.criar_artigo = (req, res) => {
   });
 }
 
-
+/**
+ * Atualiza um artigo existente.
+ * @param {import('express').Request} req - req.file.filename (opcional), body inclui id_artigo
+ * @param {import('express').Response} res
+ */
 exports.atualizar_artigo = (req, res) => {
   const id_artigo = req.body.id_artigo;
   const titulo_artigo = req.body.titulo_artigo;
@@ -161,7 +199,11 @@ exports.atualizar_artigo = (req, res) => {
   });
 }
 
-
+/**
+ * Deleta um artigo.
+ * @param {import('express').Request} req - req.body.id_artigo
+ * @param {import('express').Response} res
+ */
 exports.deletar_artigo = (req, res) => {
   const id = req.body.id_artigo;
 
@@ -174,8 +216,14 @@ exports.deletar_artigo = (req, res) => {
   });
 }
 
-exports.cadastro = (req, res) =>{
-  res.render("cadastro_artigo", {login: req.session.user})
+/**
+ * Renderiza a view de cadastro de artigo.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+exports.cadastro = async(req, res) =>{
+  const categorias = await exports.buscarCategorias()
+  res.render("cadastro_artigo", {categorias: categorias, login: req.session.user})
 
 };
 

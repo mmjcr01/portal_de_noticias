@@ -1,5 +1,14 @@
+/**
+ * Controller Categoria
+ * CRUD de categorias e renderização da view de edição.
+ * Funções:
+ * - listarCategorias, buscar_categoria, criar_categoria, atualizar_categoria, deletar_categoria
+ */
 const db = require('../database/db.js');
 
+/**
+ * Lista todas as categorias e renderiza a view de edição.
+ */
 exports.listarCategorias = (req, res) => {
   db.query('SELECT * FROM categorias', (err, results) => {
     if (err) {
@@ -10,6 +19,9 @@ exports.listarCategorias = (req, res) => {
   });
 }
 
+/**
+ * Busca uma categoria por id.
+ */
 exports.buscar_categoria = (req, res) => {
   db.query('SELECT * FROM categorias WHERE id_categoria = ?', [req.params.id_categoria], (err, results) => {
     if (err) {
@@ -19,6 +31,9 @@ exports.buscar_categoria = (req, res) => {
   });
 }
 
+/**
+ * Cria uma nova categoria.
+ */
 exports.criar_categoria = (req, res) => { 
   const nome_categoria = req.body.nome_categoria;
   const descricao_categoria = req.body.descricao_categoria;
@@ -34,6 +49,9 @@ exports.criar_categoria = (req, res) => {
  res.redirect("/categorias/editar")
 }
 
+/**
+ * Atualiza uma categoria existente.
+ */
 exports.atualizar_categoria = (req, res) => { 
   const nome_categoria = req.body.nome_categoria;
   const descricao_categoria = req.body.descricao_categoria;
@@ -51,6 +69,10 @@ exports.atualizar_categoria = (req, res) => {
   });
  
 }
+
+/**
+ * Exclui uma categoria.
+ */
 exports.deletar_categoria = (req, res) => {
   const id_categoria = req.body.id_categoria;
   

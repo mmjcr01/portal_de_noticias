@@ -1,3 +1,10 @@
+/**
+ * Rotas Categorias
+ * GET /editar  -> listarCategorias
+ * GET /:id_categoria -> buscar_categoria
+ * POST /cadastrar_categoria -> incluir/atualizar por `action`
+ * POST /deletar_categoria -> deletar categoria
+ */
 const express = require('express');
 const router = express.Router();
 const controller_categorias = require('../controllers/controller_categoria.js');

@@ -1,7 +1,20 @@
+/**
+ * Controller Home
+ * Responsável por:
+ * - Buscar categorias ativas com artigos sem destaque
+ * - Listar artigos em destaque
+ * - Calcular os mais lidos na semana (baseado em `sessao_usuarios`)
+ * - Renderizar a página inicial com artigos, destaque, categorias e métricas
+ * - Buscar artigos por palavra-chave
+ */
 const db = require('../database/db.js');
 
 
 // Função para buscar categorias
+/**
+ * Busca categorias ativas que possuem artigos sem destaque.
+ * @returns {Promise<Array>} Lista de categorias
+ */
 exports.buscarCategorias = async() => {
   return new Promise((resolve, reject) => {
     db.query('select distinct c.id_categoria, c.nome_categoria, c.descricao_categoria, c.cor_tema, c.ativo from categorias as c, artigos as a where c.id_categoria = a.id_categoria and a.destaque = 0;', (err, results) => {
@@ -14,6 +27,12 @@ exports.buscarCategorias = async() => {
   });
 };
 
+/**
+ * Lista artigos com destaque (> 0) para compor o carrossel/área de destaque da home.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<Array>} Lista de artigos em destaque
+ */
 exports.listarArtigosDestaque = async (req, res) => {
   const base_imagem = "/css/assets/images/";
   try {
@@ -33,6 +52,11 @@ exports.listarArtigosDestaque = async (req, res) => {
     throw err; // Lança o erro para ser tratado na função chamadora
   }
 };
+
+/**
+ * Calcula os artigos mais lidos na última semana com base na tabela `sessao_usuarios`.
+ * @returns {Promise<Array>} Lista dos 4 artigos mais acessados
+ */
 exports.maisLidosSemana = async () => {
   const sql = `
     SELECT 
@@ -67,7 +91,12 @@ exports.maisLidosSemana = async () => {
   });
 };
 
-
+/**
+ * Renderiza a página inicial com artigos sem destaque, destaques, categorias e mais lidos.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 exports.listarArtigos = async (req, res) => {
   const base_imagem = "/css/assets/images/";
   try {
@@ -94,8 +123,12 @@ exports.listarArtigos = async (req, res) => {
   }
 };
 
-
-
+/**
+ * Busca artigos por categoria específica.
+ * @param {import('express').Request} req - req.params.id_categoria
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 exports.buscar_artigo_por_categoria = async (req, res) => {
   const id_categoria = req.params.id_categoria; 
   try{
@@ -116,7 +149,11 @@ exports.buscar_artigo_por_categoria = async (req, res) => {
 } 
 
 
-
+/**
+ * Busca artigos por palavra-chave no resumo.
+ * @param {import('express').Request} req - req.body.busca
+ * @param {import('express').Response} res
+ */
 exports.buscarArtigos = (req,res) => {
   const busca = req.body.busca;
   const base_imagem = "/css/assets/images/";

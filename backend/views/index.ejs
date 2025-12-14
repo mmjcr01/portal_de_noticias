@@ -1,3 +1,10 @@
+<!--
+  View: Página Inicial
+  - Lista artigos sem destaque
+  - Exibe artigos em destaque
+  - Mostra as mais lidas da semana
+  - Renderiza menu, busca e categorias
+-->
 <!DOCTYPE html>
 <html lang="PT-BR">
 <head>
@@ -113,13 +120,13 @@
   <header class="grid grid-flow-col">
     <h3>Mais lidas da semana</h3>
   </header>
-  <div class="grid gap-16">
+  <div class="grid gap-16" >
     <% if (artigosMaisLidos && artigosMaisLidos.length > 0) { %>
       <% artigosMaisLidos.forEach(artigo => { %>
         <figure>
           <a href="/artigos/<%= artigo.id_artigo %>">
           <span class="content-tag"><%= artigo.nome_categoria %></span>
-          <img src="<%= base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>">
+          <img style="max-height: 250px;"src="<%= base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>">
           <p><%= artigo.resumo_artigo %></p>
           </a>
         </figure>

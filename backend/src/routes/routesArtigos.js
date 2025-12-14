@@ -1,3 +1,10 @@
+/**
+ * Rotas Artigos
+ * GET /editar  -> listarArtigos (editor)
+ * GET /:id_artigo -> buscar_artigo
+ * GET /         -> cadastro de artigo
+ * POST /cadastrar_artigo -> upload + criar/atualizar artigo via `action`
+ */
 const express = require('express');
 const router = express.Router();
 const controller_artigo = require('../controllers/controller_artigo.js');

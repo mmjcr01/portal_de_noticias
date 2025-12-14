@@ -1,5 +1,16 @@
+/**
+ * Controller Sessão Usuário
+ * Registra cliques/acessos de usuários em artigos na tabela `sessao_usuarios`.
+ */
 const db = require("../database/db");
 
+/**
+ * Registra o clique/acesso do usuário em um artigo.
+ * @param {number} id_usuario - Id do usuário logado
+ * @param {number} id_artigo - Id do artigo acessado
+ * @param {number} id_categoria - Id da categoria do artigo
+ * @returns {void}
+ */
 exports.artigoClicado = (id_usuario, id_artigo, id_categoria ) => {
 
 

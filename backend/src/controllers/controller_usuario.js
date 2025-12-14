@@ -1,10 +1,19 @@
-db = require("../database/db")
+/**
+ * Controller Usuários
+ * CRUD de usuários com hash de senha e renderização do editor.
+ */
+const db = require("../database/db");
 const bcrypt = require("bcrypt");
 const salt = bcrypt.genSaltSync(10);
 
 
 
 
+/**
+ * Cadastra um novo usuário com senha hasheada.
+ * @param {import('express').Request} req - Campos: nome_usuario, email_usuario, senha_usuario, admin_usuario
+ * @param {import('express').Response} res
+ */
 exports.cadastrarUsuario = (req,res) => {
   const nome_usuario = req.body.nome_usuario;
   const email_usuario = req.body.email_usuario;
@@ -22,7 +31,12 @@ exports.cadastrarUsuario = (req,res) => {
 }
 
 
-
+/**
+ * Atualiza dados de um usuário.
+ * Observação: a senha não é re-hasheada aqui (mantém valor fornecido); considere hashear para segurança.
+ * @param {import('express').Request} req - Campos: id_usuario, nome_usuario, email_usuario, senha_usuario, admin_usuario
+ * @param {import('express').Response} res
+ */
 exports.atualizarUsuario = (req,res) => {
   nome_usuario = req.body.nome_usuario;
   email_usuario = req.body.email_usuario;
@@ -39,6 +53,11 @@ exports.atualizarUsuario = (req,res) => {
   });
 }
 
+/**
+ * Renderiza a view de editor de usuários com a lista completa.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.buscarUsuarios = (req,res) => {
  
   db.query('select * from usuarios; ',
@@ -54,7 +73,11 @@ exports.buscarUsuarios = (req,res) => {
 
 
 
-
+/**
+ * Exclui um usuário pelo id.
+ * @param {import('express').Request} req - req.body.id_usuario
+ * @param {import('express').Response} res
+ */
 exports.deletarUsuario = (req,res) => {
   id_usuario = req.body.id_usuario;
   db.query('DELETE FROM `portal_noticias`.`usuarios` WHERE id_usuario = ?;',

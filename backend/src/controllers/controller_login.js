@@ -1,6 +1,18 @@
 const db = require("../database/db");
+/**
+ * Controller Login
+ * Autenticação de usuários:
+ * - Busca artigos (auxiliar)
+ * - Autenticação com bcrypt
+ * - Criação de sessão do usuário
+ * - Renderização de login e logout
+ */
 const bcrypt = require("bcrypt");
 
+/**
+ * Busca categorias ativas que possuem artigos sem destaque.
+ * @returns {Promise<Array>} Lista de categorias
+ */
 exports.buscarCategorias = async() => {
   return new Promise((resolve, reject) => {
     db.query('select distinct c.id_categoria, c.nome_categoria, c.descricao_categoria, c.cor_tema, c.ativo from categorias as c, artigos as a where c.id_categoria = a.id_categoria and a.destaque = 0;', (err, results) => {
@@ -13,6 +25,12 @@ exports.buscarCategorias = async() => {
   });
 };
 
+/**
+ * Lista artigos com destaque (> 0) para carrossel/área de destaque.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<Array>} Artigos em destaque
+ */
 exports.listarArtigosDestaque = async (req, res) => {
   const base_imagem = "/css/assets/images/";
   try {
@@ -33,7 +51,10 @@ exports.listarArtigosDestaque = async (req, res) => {
   }
 };
 
-
+/**
+ * Lista artigos sem destaque.
+ * @returns {Promise<Array>} Artigos sem destaque
+ */
 exports.listarArtigos = async () => {
   
   try {
@@ -59,7 +80,11 @@ exports.listarArtigos = async () => {
 };
 
 
-
+/**
+ * Autentica usuário via email e senha, cria sessão e redireciona para home.
+ * @param {import('express').Request} req - Campos: email_usuario, senha_usuario
+ * @param {import('express').Response} res
+ */
 exports.loginAutenticacao = (req, res) => {
   const email_usuario = req.body.email_usuario;
   const senha_usuario = req.body.senha_usuario;
@@ -92,11 +117,20 @@ exports.loginAutenticacao = (req, res) => {
   });
 };
 
+/**
+ * Renderiza a página de login.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.login = (req, res) =>{
   res.render("login")
 }
 
-
+/**
+ * Faz logout destruindo a sessão e redireciona para home.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.logout = (req, res) => {
   req.session.destroy(() => {
     return res.redirect("/");

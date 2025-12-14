@@ -1,3 +1,9 @@
+/**
+ * Portal de Notícias - Configuração de conexão MySQL (mysql2)
+ * - Cria uma conexão simples com o banco `portal_noticias`
+ * - Loga status da conexão ao iniciar
+ * OBS: Em produção, mova credenciais para variáveis de ambiente (.env)
+ */
 const mysql = require('mysql2');
 
 

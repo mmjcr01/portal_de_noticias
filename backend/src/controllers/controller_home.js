@@ -69,8 +69,8 @@ exports.maisLidosSemana = async () => {
         v.destaque,
         v.id_categoria,
         v.nome_categoria,
-        v.id_autor,
-        v.nome_autor,
+        v.id_usuario,
+        v.nome_usuario,
         COUNT(s.id_artigo) AS total_acessos
     FROM vw_artigos v
     JOIN sessao_usuarios s ON s.id_artigo = v.id_artigo

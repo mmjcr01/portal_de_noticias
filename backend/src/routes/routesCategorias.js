@@ -8,12 +8,13 @@
 const express = require('express');
 const router = express.Router();
 const controller_categorias = require('../controllers/controller_categoria.js');
+const { isAdmin } = require("../middleware/auth.js");
 
 
 
-router.get('/editar', controller_categorias.listarCategorias);
-router.get('/:id_categoria', controller_categorias.buscar_categoria);
-router.post("/cadastrar_categoria", (req, res) =>{
+router.get('/editar', isAdmin , controller_categorias.listarCategorias);
+router.get('/:id_categoria', isAdmin, controller_categorias.buscar_categoria);
+router.post("/cadastrar_categoria", isAdmin, (req, res) =>{
   const action = req.body.action;
    
 if (action === 'incluir') {
@@ -27,7 +28,7 @@ if (action === 'incluir') {
 }
 });
  
-router.post('/deletar_categoria', controller_categorias.deletar_categoria);
+router.post('/deletar_categoria', isAdmin, controller_categorias.deletar_categoria);
 
 
 module.exports = router;

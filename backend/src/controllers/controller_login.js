@@ -108,7 +108,6 @@ exports.loginAutenticacao = (req, res) => {
         id_usuario: results[0].id_usuario,
         nome_usuario: results[0].nome_usuario,
         email_usuario: results[0].email_usuario,
-        senha_usuario: results[0].senha_usuario,
         admin_usuario: results[0].admin_usuario
       };
       res.redirect("/");

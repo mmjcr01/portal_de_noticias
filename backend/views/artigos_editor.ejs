@@ -216,12 +216,12 @@
 
   <div id="id_autor">
     <label for="autor_select">Autor</label>
-    <select id="autor_select" name="id_autor">
+    <select id="autor_select" name="id_usuario">
       <option disabled selected>Selecione um autor</option>
-      <% autores.forEach(autor => { %>
-        <option value="<%= autor.id_autor %>"
-        data-id="<%= autor.id_autor %>">
-        <%= autor.nome_autor %></option>
+      <% usuarios.forEach(usuario => { %>
+        <option value="<%= usuario.id_usuario %>"
+        data-id="<%= usuario.id_usuario %>">
+        <%= usuario.nome_usuario %></option>
       <% }) %>
     </select>
   </div>

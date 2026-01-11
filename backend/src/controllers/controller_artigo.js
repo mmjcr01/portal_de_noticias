@@ -63,9 +63,9 @@ exports.buscarCategorias = () => {
  * Lista todos os autores.
  * @returns {Promise<Array>} autores
  */
-exports.buscarAutores = () => {
+exports.buscarUsuarios = () => {
   return new Promise((resolve, reject) => {
-    db.query('SELECT * FROM autores', (err, results) => {
+    db.query('SELECT * FROM usuarios', (err, results) => {
       if (err) {
         console.error('Erro ao listar autores:', err);
         return reject(err);
@@ -96,11 +96,11 @@ exports.listarArtigos = async (req, res) => {
     });
 
     // Buscar autores
-    const autores = await exports.buscarAutores();
+    const usuarios = await exports.buscarUsuarios();
     const categorias = await exports.buscarCategorias();
 
     // Renderizar a view com os dados
-    res.render('artigos_editor', { artigos, autores, categorias, base_imagem: base_imagem  });
+    res.render('artigos_editor', { artigos, usuarios, categorias, base_imagem: base_imagem  });
   } catch (err) {
     console.error('Erro ao listar artigos ou autores:', err);
     res.status(500).json({ error: 'Erro ao listar artigos ou autores' });
@@ -153,14 +153,14 @@ exports.criar_artigo = (req, res) => {
   const alt_imagem = req.body.alt_imagem;
   const data_publicacao = req.body.data_publicacao;
   const id_categoria = req.body.id_categoria;
-  const id_autor = req.body.id_autor
+  const id_usuario = req.body.id_usuario
   const destaque = req.body.destaque
   const imagem_destaque_artigo = req.file ? req.file.filename : req.body.imagem_destaque_artigo;
 
   
 
   db.query('INSERT INTO `portal_noticias`.`artigos` (titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque, imagem_destaque_artigo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-    [titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_autor, data_publicacao, destaque, imagem_destaque_artigo], (err, results) => {
+    [titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_usuario, data_publicacao, destaque, imagem_destaque_artigo], (err, results) => {
     if (err) {
       console.error('Erro ao criar artigo:', err);
       return res.status(500).json({ error: 'Erro ao criar artigo' });

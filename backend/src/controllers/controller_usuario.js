@@ -38,18 +38,18 @@ exports.cadastrarUsuario = (req,res) => {
  * @param {import('express').Response} res
  */
 exports.atualizarUsuario = (req,res) => {
-  nome_usuario = req.body.nome_usuario;
-  email_usuario = req.body.email_usuario;
-  senha_usuario = req.body.senha_usuario;
-  admin_usuario = req.body.admin_usuario;
-  id_usuario = req.body.id_usuario;
+  const nome_usuario = req.body.nome_usuario;
+  const email_usuario = req.body.email_usuario;
+  const hashSenha =  bcrypt.hashSync(req.body.senha_usuario, salt); 
+  const admin_usuario = req.body.admin_usuario;
+  const id_usuario = req.body.id_usuario;
   db.query('UPDATE `portal_noticias`.`usuarios`SET `nome_usuario` = ?,`email_usuario` = ?,`senha_usuario` = ?, `admin_usuario` = ? WHERE `id_usuario` = ?;',
-  [nome_usuario, email_usuario, senha_usuario, admin_usuario, id_usuario], (err, results) =>{
+  [nome_usuario, email_usuario, hashSenha, admin_usuario, id_usuario], (err, results) =>{
     if (err) {
        console.error('erro ao atualizar usuario', err);
       return res.status(500).json({ error: 'Erro ao atualizar usuario' });
     };
-     res.redirect("/usuarios/editar")
+     res.redirect("/usuarios/editar");
   });
 }
 

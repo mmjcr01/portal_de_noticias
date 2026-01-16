@@ -25,12 +25,16 @@ const port = process.env.PORT;
 app.use(helmet());
 
 // Segurança: Rate Limiting para prevenir ataques de força bruta
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,  // 15 minutos
-  max: 100,  // Limita a 100 requisições por IP
-  message: 'Muitas tentativas de acesso. Tente novamente mais tarde.'
-});
-app.use(limiter);
+if (process.env.NODE_ENV === 'production') {
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,  // 15 minutos
+    max: 100,  // Limita a 100 requisições por IP
+    message: 'Muitas tentativas de acesso. Tente novamente mais tarde.'
+  });
+  app.use(limiter);
+} else {
+  console.log('⚠️  Rate limiter desabilitado em desenvolvimento');
+}
 
 
 app.use(session({

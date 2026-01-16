@@ -24,7 +24,7 @@ exports.isAuthenticated = (req, res, next) => {
  * @param {import('express').NextFunction} next
  */
 exports.isAdmin = (req, res, next) => {
-  if (req.session.user && req.session.user.admin_usuario === 2) {
+  if (req.session.user && req.session.user.admin_usuario === 1) {
     return next(); // É admin, continua
   }
   res.status(403).json({ error: 'Acesso negado. Você não tem permissões de administrador.' });

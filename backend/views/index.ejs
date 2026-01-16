@@ -20,12 +20,13 @@
   <header class="container">
   <nav id="primary" class="grid grid-flow-col">
     <!-- Botão Menu -->
+    <div id="menu">
     <a href="#" id="menu-btn">
-      <div>
         <img src="/css/assets/icons/List.svg" alt="icone de menu">
         <strong>Menu</strong>
+      </a>
       </div>
-    </a>
+    
 
     <!-- Logo -->
     <div>
@@ -49,7 +50,15 @@
     <%if (login.admin_usuario === 2){ %>
     <li><a href="/artigos/">Criar um artigo</a></li>
     <% } %>
-  <%}else {%>
+    <% if (login.admin_usuario === 1){ %>
+      <details class="text" style="color: black;">
+      <summary >Configurações</summary>
+      <a href="usuarios/editar">Menu usuários</a>
+      <a href="artigos/editar">Menu artigos</a>
+      <a href="categorias/editar">Menu categorias</a>
+      </details>
+      <% } %>
+      <%}else {%>
     <li><a href="/login">Fazer login</a></li>
   <% } %>
   <li><a href="#">Contato</a></li>

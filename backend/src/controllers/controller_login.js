@@ -13,15 +13,18 @@ const bcrypt = require("bcrypt");
  * Busca categorias ativas que possuem artigos sem destaque.
  * @returns {Promise<Array>} Lista de categorias
  */
-exports.buscarCategorias = async() => {
+exports.buscarCategorias = async () => {
   return new Promise((resolve, reject) => {
-    db.query('select distinct c.id_categoria, c.nome_categoria, c.descricao_categoria, c.cor_tema, c.ativo from categorias as c, artigos as a where c.id_categoria = a.id_categoria and a.destaque = 0;', (err, results) => {
-      if (err) {
-        console.error('Erro ao listar categorias:', err);
-        return reject(err);
-      }
-      resolve(results);
-    });
+    db.query(
+      "select distinct c.id_categoria, c.nome_categoria, c.descricao_categoria, c.cor_tema, c.ativo from categorias as c, artigos as a where c.id_categoria = a.id_categoria and a.destaque = 0;",
+      (err, results) => {
+        if (err) {
+          console.error("Erro ao listar categorias:", err);
+          return reject(err);
+        }
+        resolve(results);
+      },
+    );
   });
 };
 
@@ -35,18 +38,21 @@ exports.listarArtigosDestaque = async (req, res) => {
   const base_imagem = "/css/assets/images/";
   try {
     const artigos_destaque = await new Promise((resolve, reject) => {
-      db.query('SELECT * FROM vw_artigos where destaque > 0 order by nome_categoria', (err, results) => {
-        if (err) {
-          console.error('Erro ao listar artigos:', err);
-          return reject(err);
-        }
-        resolve(results);
-      });
+      db.query(
+        "SELECT * FROM vw_artigos where destaque > 0 order by nome_categoria",
+        (err, results) => {
+          if (err) {
+            console.error("Erro ao listar artigos:", err);
+            return reject(err);
+          }
+          resolve(results);
+        },
+      );
     });
 
     return artigos_destaque; // Retorna os dados corretamente
   } catch (err) {
-    console.error('Erro ao listar artigos ou autores:', err);
+    console.error("Erro ao listar artigos ou autores:", err);
     throw err; // Lança o erro para ser tratado na função chamadora
   }
 };
@@ -56,29 +62,27 @@ exports.listarArtigosDestaque = async (req, res) => {
  * @returns {Promise<Array>} Artigos sem destaque
  */
 exports.listarArtigos = async () => {
-  
   try {
     // Buscar artigos sem destaque
     const artigos = await new Promise((resolve, reject) => {
-      db.query('SELECT * FROM vw_artigos where destaque = 0 order by nome_categoria;', (err, results) => {
-        if (err) {
-          console.error('Erro ao listar artigos:', err);
-          return reject(err);
-        }
-        resolve(results);
-      });
-      
+      db.query(
+        "SELECT * FROM vw_artigos where destaque = 0 order by nome_categoria;",
+        (err, results) => {
+          if (err) {
+            console.error("Erro ao listar artigos:", err);
+            return reject(err);
+          }
+          resolve(results);
+        },
+      );
     });
 
-    return artigos
-
-
+    return artigos;
   } catch (err) {
-    console.error('Erro ao listar artigos ou autores:', err);
-    return ({ error: 'Erro ao listar artigos ou autores' });
+    console.error("Erro ao listar artigos ou autores:", err);
+    return { error: "Erro ao listar artigos ou autores" };
   }
 };
-
 
 /**
  * Autentica usuário via email e senha, cria sessão e redireciona para home.
@@ -90,30 +94,49 @@ exports.loginAutenticacao = (req, res) => {
   const senha_usuario = req.body.senha_usuario;
   const base_imagem = "/css/assets/images/";
 
-  db.query("select * from usuarios where email_usuario = ?", [email_usuario], (err, results) => {
-    if (err) return res.status(500).json({ error: "Erro no servidor" });
-    if (!results || results.length === 0) return res.status(404).json({ error: "Usuário não encontrado" });
-
-    const hash = results[0].senha_usuario;
-    // Usando callback do bcrypt
-      bcrypt.compare(senha_usuario, hash, (err, ismatch) => {
+  db.query(
+    "select * from usuarios where email_usuario = ?",
+    [email_usuario],
+    (err, results) => {
       if (err) {
-        console.error("Erro ao comparar senhas:", err);
-        return res.status(500).json({ error: "Erro ao comparar senhas" });
+        console.error("Erro no servidor:", err);
+        return res.renderError(
+          "Erro ao conectar ao servidor. Tente novamente.",
+          "/login",
+        );
       }
-      if (!ismatch) return res.status(401).json({ error: "Senha incorreta" });
+      if (!results || results.length === 0) {
+        return res.renderError(
+          "Usuário não encontrado. Verifique seu email.",
+          "/login",
+        );
+      }
 
-      // Só se a senha estiver correta
-      req.session.user = {
-        id_usuario: results[0].id_usuario,
-        nome_usuario: results[0].nome_usuario,
-        email_usuario: results[0].email_usuario,
-        admin_usuario: results[0].admin_usuario
-      };
-      res.redirect("/");
-    });
+      const hash = results[0].senha_usuario;
+      // Usando callback do bcrypt
+      bcrypt.compare(senha_usuario, hash, (err, ismatch) => {
+        if (err) {
+          console.error("Erro ao comparar senhas:", err);
+          return res.renderError(
+            "Erro ao autenticar. Tente novamente.",
+            "/login",
+          );
+        }
+        if (!ismatch) {
+          return res.renderError("Senha incorreta. Tente novamente.", "/login");
+        }
 
-  });
+        // Só se a senha estiver correta
+        req.session.user = {
+          id_usuario: results[0].id_usuario,
+          nome_usuario: results[0].nome_usuario,
+          email_usuario: results[0].email_usuario,
+          admin_usuario: results[0].admin_usuario,
+        };
+        res.redirect("/");
+      });
+    },
+  );
 };
 
 /**
@@ -121,9 +144,9 @@ exports.loginAutenticacao = (req, res) => {
  * @param {import('express').Request} req
  * @param {import('express').Response} res
  */
-exports.login = (req, res) =>{
-  res.render("login")
-}
+exports.login = (req, res) => {
+  res.render("login");
+};
 
 /**
  * Faz logout destruindo a sessão e redireciona para home.
@@ -134,5 +157,4 @@ exports.logout = (req, res) => {
   req.session.destroy(() => {
     return res.redirect("/");
   });
-}
-
+};

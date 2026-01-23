@@ -13,7 +13,7 @@ exports.isAuthenticated = (req, res, next) => {
   if (req.session.user) {
     return next(); // Usuário logado, continua
   }
-  res.status(401).json({ error: 'Acesso negado. Faça login primeiro.' });
+  res.status(401).json({ error: "Acesso negado. Faça login primeiro." });
   // Ou redirecione: res.redirect('/login');
 };
 
@@ -27,9 +27,10 @@ exports.isAdmin = (req, res, next) => {
   if (req.session.user && req.session.user.admin_usuario === 1) {
     return next(); // É admin, continua
   }
-  res.status(403).json({ error: 'Acesso negado. Você não tem permissões de administrador.' });
-  // Ou redirecione/renderize uma página: res.render('acesso-negado');
+  res.renderError(
+    "Acesso negado. Você não tem permissões de administrador.",
+    "/",
+  );
 };
-
 
 exports.isAuthenticatedAndAdmin = [exports.isAuthenticated, exports.isAdmin];

@@ -1,0 +1,12 @@
+<!-- Componente de Alertas - Incluir no topo de todas as views -->
+<% if (error) { %>
+  <script nonce="<%= nonce %>">
+    alert('❌ Erro: <%= error %>');
+  </script>
+<% } %>
+
+<% if (success) { %>
+  <script nonce="<%= nonce %>">
+    alert('✅ Sucesso: <%= success %>');
+  </script>
+<% } %>

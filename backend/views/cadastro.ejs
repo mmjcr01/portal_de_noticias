@@ -4,44 +4,51 @@
 -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal de notícias</title>
-  <link rel="stylesheet" href="/css/Login.css">
-  <link rel="icon" href="/css/assets/favicon.ico">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal de notícias</title>
+    <link rel="stylesheet" href="/css/Login.css" />
+    <link rel="icon" href="/css/assets/favicon.ico" />
+  </head>
+  <body>
+    <%- include('_alerts.ejs') %>
+
     <div class="container">
       <main>
         <div class="formulario">
-        <h2>CADASTRO DO USUÁRIO</h2>
-        <form action="/cadastro/cadastrar_usuario" method="post">
-        <label for="nome_usuario">Nome do Usuário:</label>
-        <input type="text" id="nome_usuario" name="nome_usuario" required>
-        <br>
-        <label for="email_usuario">Email do Usuário:</label>
-        <input type="email" id="email_usuario" name="email_usuario" required>
-        <br>
-        <label for="senha_usuario">Senha do Usuário:</label>
-        <input type="password" id="senha_usuario" name="senha_usuario" required>
-        
-        <div class="checkbox">
-          <label for="admin_usuario">Sou autor:</label>
-          <input type="checkbox" name="admin_usuario" value="2">
-        
-        </div>
-        
-        <br>
-    
+          <h2>CADASTRO DO USUÁRIO</h2>
+          <form action="/cadastro/cadastrar_usuario" method="post">
+            <label for="nome_usuario">Nome do Usuário:</label>
+            <input type="text" id="nome_usuario" name="nome_usuario" required />
+            <br />
+            <label for="email_usuario">Email do Usuário:</label>
+            <input
+              type="email"
+              id="email_usuario"
+              name="email_usuario"
+              required
+            />
+            <br />
+            <label for="senha_usuario">Senha do Usuário:</label>
+            <input
+              type="password"
+              id="senha_usuario"
+              name="senha_usuario"
+              required
+            />
 
-      
-        <button type="submit">Cadastrar Usuário</button>
-        </form>
+            <div class="checkbox">
+              <label for="admin_usuario">Sou autor:</label>
+              <input type="checkbox" name="admin_usuario" value="2" />
+            </div>
+
+            <br />
+
+            <button type="submit">Cadastrar Usuário</button>
+          </form>
         </div>
       </main>
-
-      
-  </div>
-</body>
+    </div>
+  </body>
 </html>

@@ -63,6 +63,24 @@ app.use(
 );
 
 app.set("view engine", "ejs");
+
+// Middleware para flash messages (erros e sucessos)
+app.use((req, res, next) => {
+  res.locals.error = req.session.error || null;
+  res.locals.success = req.session.success || null;
+  delete req.session.error;
+  delete req.session.success;
+  next();
+});
+
+// Middleware para renderizar erros como página com alert
+app.use((req, res, next) => {
+  res.renderError = (message, redirectUrl) => {
+    req.session.error = message;
+    res.redirect(redirectUrl || "/");
+  };
+  next();
+});
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static("public"));

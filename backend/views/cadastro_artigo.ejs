@@ -85,11 +85,12 @@
         <% categorias.forEach(categoria => { %>
           <option value="<%= categoria.id_categoria %>"><%= categoria.nome_categoria %></option>
         <% }); %>
+      </select>
       <br>
 
-      
+      <input type="hidden" id="alt_imagem" name="alt_imagem" value="Imagem do artigo">
       <input type="hidden" id="id_usuario" name="id_usuario" value="1" required>
-     
+      <input type="hidden" id="destaque" name="destaque" value="0">
 
       <label for="imagem_destaque_artigo">Imagem de Destaque:</label>
       <input type="file" id="imagem_destaque_artigo" name="imagem_destaque_artigo" accept="image/*" required>

@@ -5,38 +5,43 @@
 -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal de notícias</title>
-  <link rel="stylesheet" href="/css/Login.css">
-  <link rel="icon" href="/css/assets/favicon.ico">
-</head>
-<body>
-  
- 
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal de notícias</title>
+    <link rel="stylesheet" href="/css/Login.css" />
+    <link rel="icon" href="/css/assets/favicon.ico" />
+  </head>
+  <body>
+    <%- include('_alerts.ejs') %>
 
     <div class="container">
       <main>
         <div class="formulario">
-        <h2>Login</h2>
-        <form action="/login/autenticar_login" method="post">
-        <label for="email_usuario">Email do Usuário:</label>
-        <input type="email" id="email_usuario" name="email_usuario" required>
-        <br>
-        <label for="senha_usuario">Senha do Usuário:</label>
-        <input type="password" id="senha_usuario" name="senha_usuario" required>
-        <br>
-        
+          <h2>Login</h2>
+          <form action="/login/autenticar_login" method="post">
+            <label for="email_usuario">Email do Usuário:</label>
+            <input
+              type="email"
+              id="email_usuario"
+              name="email_usuario"
+              required
+            />
+            <br />
+            <label for="senha_usuario">Senha do Usuário:</label>
+            <input
+              type="password"
+              id="senha_usuario"
+              name="senha_usuario"
+              required
+            />
+            <br />
 
-      
-        <button type="submit">Entrar</button>
-        </form>
-        <a href="/cadastro/"><p>Novo por aqui? Cadastre-se</p></a>
+            <button type="submit">Entrar</button>
+          </form>
+          <a href="/cadastro/"><p>Novo por aqui? Cadastre-se</p></a>
         </div>
       </main>
-
-      
-  </div>
-</body>
+    </div>
+  </body>
 </html>

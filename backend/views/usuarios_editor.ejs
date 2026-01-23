@@ -9,6 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal de notícias</title>
   <link rel="stylesheet" href="/css/usuarios_editor.css">
+  <link rel="icon" href="/css/assets/favicon.ico">
 
 </head>
 <body>
@@ -70,13 +71,7 @@
           <td><%= usuario.senha_usuario %></td>
           <td><%= usuario.admin_usuario === 1 ? 'Sim' : 'Não' %></td>
           <td>
-            <button type="button" onclick="editar_formulario(
-              '<%= usuario.id_usuario %>',
-              '<%= usuario.nome_usuario %>',
-              '<%= usuario.email_usuario %>',
-              '<%= usuario.senha_usuario %>',
-              '<%= usuario.admin_usuario %>'
-            )" class="button-td">Editar</button>
+            <button type="button" class="button-td editar-btn-usuario" data-id="<%= usuario.id_usuario %>" data-nome="<%= usuario.nome_usuario %>" data-email="<%= usuario.email_usuario %>" data-senha="<%= usuario.senha_usuario %>" data-admin="<%= usuario.admin_usuario %>">Editar</button>
 
             <form method="POST" action="/usuarios/deletar_usuario" class="form-inline">
               <input type="hidden" name="id_usuario" value="<%= usuario.id_usuario %>">
@@ -89,14 +84,30 @@
     </table>
   </div>
 
-  <script>
+  <script nonce="<%= nonce %>">
     function editar_formulario(id_usuario, nome_usuario, email_usuario, senha_usuario, admin_usuario) {
       document.getElementById("id_usuario").value = id_usuario;
       document.getElementById("nome_usuario_input").value = nome_usuario;
       document.getElementById("email_usuario_input").value = email_usuario;
       document.getElementById("senha_usuario_input").value = senha_usuario;
       document.getElementById("admin_usuario_select").value = admin_usuario;
-  }
+      document.querySelector(".form-principal").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const botoes = document.querySelectorAll('.editar-btn-usuario');
+      botoes.forEach(botao => {
+        botao.addEventListener('click', function() {
+          editar_formulario(
+            this.dataset.id,
+            this.dataset.nome,
+            this.dataset.email,
+            this.dataset.senha,
+            this.dataset.admin
+          );
+        });
+      });
+    });
   </script>
 </body>
 </html>

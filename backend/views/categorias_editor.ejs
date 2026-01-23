@@ -3,7 +3,7 @@
   - CRUD visual para categorias
 -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="PT-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,6 +18,12 @@
       --cor-fundo: #F0E8C2;
       --cor-body: #0F172A;
     }
+
+    #nome_categoria      { grid-area: nome_categoria; }
+    #descricao_categoria { grid-area: descricao_categoria; }
+    #cor_tema            { grid-area: cor_tema; }
+    #ativo               { grid-area: ativo; }
+    .btn-group           { grid-area: btn-group; }
 
     body {
       background-color: var(--cor-body);
@@ -49,6 +55,11 @@
       font-size: 2rem;
     }
 
+    h2 {
+      font: var(--h1);
+      font-size: 1.5rem;
+    }
+
     .fonth1 {
       font: var(--h1);
     }
@@ -66,40 +77,6 @@
       background-color: aliceblue;
     }
 
-    /* Formulário */
-    .form-principal {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      align-items: stretch;
-    }
-
-    .form-principal input[type="text"],
-    .form-principal textarea,
-    .form-principal select {
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 0.5rem;
-      font-size: 1rem;
-      width: 100%;
-      box-sizing: border-box;
-      transition: all 0.3s ease;
-    }
-
-    .form-principal textarea {
-      resize: vertical;
-      min-height: 4rem;
-    }
-
-    .form-principal input[type="text"]:focus,
-    .form-principal textarea:focus,
-    .form-principal select:focus {
-      border-color: #007BFF;
-      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-      outline: none;
-    }
-
-    /* Botões */
     .button-td {
       background-color: var(--cor-principal);
       color: #fff;
@@ -128,29 +105,54 @@
       background-color: #e74c3c;
     }
 
-    .btn-custom {
-      background-color: var(--cor-principal);
-      color: #fff;
-      border: none;
-      border-radius: 0.5rem;
-      padding: 10px 24px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+    .form-principal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        "nome_categoria cor_tema"
+        "descricao_categoria ativo"
+        "btn-group btn-group";
+      gap: 2rem;
+      align-items: start;
     }
 
-    .btn-custom:hover {
-      background-color: var(--cor-secundaria);
+    .form-principal label {
+      font-weight: bold;
+    }
+
+    .form-principal input,
+    .form-principal textarea,
+    .form-principal select {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 0.4rem;
+      font-size: 0.9rem;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-principal textarea {
+      resize: vertical;
+      min-height: 4rem;
+    }
+
+    .form-principal input:focus,
+    .form-principal textarea:focus,
+    .form-principal select:focus {
+      border-color: var(--cor-secundaria);
+      box-shadow: 0 0 5px rgba(92, 163, 179, 0.5);
+      outline: none;
     }
 
     .btn-group {
       display: flex;
       gap: 1rem;
       margin-top: 1rem;
+      align-items: center;
     }
 
-    /* Form inline para botão deletar */
     form.form-inline {
       display: inline-block;
       margin: 0;
@@ -162,6 +164,40 @@
 <body>
 
   <div class="container">
+    <h2 class="fonth1">Cadastrar / Atualizar Categoria</h2>
+
+    <form method="post" action="/categorias/cadastrar_categoria" class="form-principal">
+      <input type="hidden" name="id_categoria" id="id_categoria">
+
+      <div id="nome_categoria">
+        <label for="nome_categoria_input">Nome</label>
+        <input type="text" name="nome_categoria" id="nome_categoria_input" required>
+      </div>
+
+      <div id="cor_tema">
+        <label for="cor_tema_input">Cor do tema</label>
+        <input type="text" name="cor_tema" id="cor_tema_input">
+      </div>
+
+      <div id="descricao_categoria">
+        <label for="descricao_categoria_input">Descrição da Categoria</label>
+        <textarea name="descricao_categoria" id="descricao_categoria_input" required></textarea>
+      </div>
+
+      <div id="ativo">
+        <label for="ativo_input">Status</label>
+        <select name="ativo" id="ativo_input">
+          <option value="1" selected>Ativado</option>
+          <option value="0">Desativado</option>
+        </select>
+      </div>
+
+      <div class="btn-group">
+        <button type="submit" class="button-td" name="action" value="incluir">Cadastrar</button>
+        <button type="submit" class="button-td" name="action" value="atualizar">Atualizar</button>
+      </div>
+    </form>
+
     <h1>CATEGORIAS</h1>
 
     <table>
@@ -182,15 +218,9 @@
           <td><%= categoria.nome_categoria %></td>
           <td><%= categoria.descricao_categoria %></td>
           <td><%= categoria.cor_tema %></td>
-          <td><%= categoria.ativo %></td>
+          <td><%= categoria.ativo === 1 ? 'Sim' : 'Não' %></td>
           <td>
-            <button type="button" onclick="editar_formulario(
-              '<%= categoria.id_categoria %>',
-              '<%= categoria.nome_categoria %>',
-              '<%= categoria.descricao_categoria %>',
-              '<%= categoria.cor_tema %>',
-              '<%= categoria.ativo %>'
-            )" class="button-td">Editar</button>
+            <button type="button" class="button-td editar-btn-categoria" data-id="<%= categoria.id_categoria %>" data-nome="<%= categoria.nome_categoria %>" data-descricao="<%= categoria.descricao_categoria %>" data-cor="<%= categoria.cor_tema %>" data-ativo="<%= categoria.ativo %>">Editar</button>
 
             <form method="post" action="/categorias/deletar_categoria" class="form-inline">
               <input type="hidden" name="id_categoria" value="<%= categoria.id_categoria %>">
@@ -201,42 +231,32 @@
         <% }) %>
       </tbody>
     </table>
-
-    <form method="post" action="/categorias/cadastrar_categoria" class="form-principal">
-      <h2 class="fonth1">Cadastrar / Atualizar Categoria</h2>
-
-      <input type="hidden" name="id_categoria" id="id_categoria">
-
-      <label for="nome_categoria">Nome</label>
-      <input type="text" name="nome_categoria" id="nome_categoria" required>
-
-      <label for="descricao_categoria">Descrição da Categoria</label>
-      <textarea name="descricao_categoria" id="descricao_categoria" required></textarea>
-
-      <label for="cor_tema">Cor do tema</label>
-      <input type="text" name="cor_tema" id="cor_tema">
-
-      <label for="ativo">Status</label>
-      <select name="ativo" id="ativo">
-        <option value="1" selected>ativado</option>
-        <option value="0">desativado</option>
-      </select>
-
-      <div class="btn-group">
-        <button type="submit" class="btn-custom" name="action" value="incluir">Cadastrar</button>
-        <button type="submit" class="btn-custom" name="action" value="atualizar">Atualizar</button>
-      </div>
-    </form>
   </div>
 
-  <script>
+  <script nonce="<%= nonce %>">
     function editar_formulario(id_categoria, nome_categoria, descricao_categoria, cor_tema, ativo) {
       document.getElementById("id_categoria").value = id_categoria;
-      document.getElementById("nome_categoria").value = nome_categoria;
-      document.getElementById("descricao_categoria").value = descricao_categoria;
-      document.getElementById("cor_tema").value = cor_tema;
-      document.getElementById("ativo").value = ativo;
+      document.getElementById("nome_categoria_input").value = nome_categoria;
+      document.getElementById("descricao_categoria_input").value = descricao_categoria;
+      document.getElementById("cor_tema_input").value = cor_tema;
+      document.getElementById("ativo_input").value = ativo;
+      document.querySelector(".form-principal").scrollIntoView({ behavior: "smooth", block: "start" });
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const botoes = document.querySelectorAll('.editar-btn-categoria');
+      botoes.forEach(botao => {
+        botao.addEventListener('click', function() {
+          editar_formulario(
+            this.dataset.id,
+            this.dataset.nome,
+            this.dataset.descricao,
+            this.dataset.cor,
+            this.dataset.ativo
+          );
+        });
+      });
+    });
   </script>
 
 </body>

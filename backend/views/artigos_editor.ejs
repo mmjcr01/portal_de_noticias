@@ -228,7 +228,7 @@
 
   <div id="data_publicacao">
     <label for="data_select">Data publicação</label>
-    <input type="date" id="data_select">
+    <input type="date" id="data_select" name="data_publicacao">
   </div>
   
   <div id="destaque">
@@ -277,15 +277,7 @@
           <td><%= artigo.nome_categoria %></td>
           <td><%= artigo.nome_autor %></td>
           <td>
-            <button type="button" onclick="editar_formulario(
-              '<%= artigo.id_artigo %>',
-              '<%= artigo.titulo_artigo %>',
-              '<%= artigo.resumo_artigo%>',
-              '<%= artigo.conteudo_artigo %>',
-              '<%= artigo.alt_imagem %>',
-              '<%= artigo.id_categoria %>',
-              '<%= artigo.id_autor %>'
-            )" class="button-td">Editar</button>
+            <button type="button" class="button-td editar-btn" data-id-artigo="<%= artigo.id_artigo %>" data-titulo="<%= artigo.titulo_artigo %>" data-resumo="<%= artigo.resumo_artigo %>" data-conteudo="<%= artigo.conteudo_artigo %>" data-alt="<%= artigo.alt_imagem %>" data-categoria="<%= artigo.id_categoria %>" data-autor="<%= artigo.id_usuario %>" data-data="<%= artigo.data_publicacao %>" data-destaque="<%= artigo.destaque %>">Editar</button>
 
             <form method="post" action="/artigos/deletar_artigo" class="form-inline">
               <input type="hidden" name="id_artigo" value="<%= artigo.id_artigo %>">
@@ -300,19 +292,39 @@
   
   </div>
 
-  <script>
-    function editar_formulario(id_artigo, titulo_artigo, resumo_artigo, conteudo_artigo,  alt_imagem, id_categoria, id_autor) {
-      
+  <script nonce="<%= nonce %>">
+    function editar_formulario(id_artigo, titulo, resumo, conteudo, alt, categoria, autor, data, destaque) {
       document.getElementById("id_artigo").value = id_artigo;
-      document.getElementById("titulo_input").value = titulo_artigo;
-      document.getElementById("resumo_artigo_input").value = resumo_artigo;
-      document.getElementById("conteudo_input").value = conteudo_artigo;
-      document.getElementById("alt_imagem_input").value = alt_imagem;
-      document.getElementById("categoria_select").value = id_categoria;
-      document.getElementById("autor_select").value = id_autor;
+      document.getElementById("titulo_input").value = titulo;
+      document.getElementById("resumo_artigo_input").value = resumo;
+      document.getElementById("conteudo_input").value = conteudo;
+      document.getElementById("alt_imagem_input").value = alt;
+      document.getElementById("categoria_select").value = categoria;
+      document.getElementById("autor_select").value = autor;
+      document.getElementById("data_select").value = data || '';
+      document.getElementById("destaque_input").value = destaque || '0';
       
-     
+      document.querySelector(".form-principal").scrollIntoView({ behavior: "smooth", block: "start" });
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const botoes = document.querySelectorAll('.editar-btn');
+      botoes.forEach(botao => {
+        botao.addEventListener('click', function() {
+          editar_formulario(
+            this.dataset.idArtigo,
+            this.dataset.titulo,
+            this.dataset.resumo,
+            this.dataset.conteudo,
+            this.dataset.alt,
+            this.dataset.categoria,
+            this.dataset.autor,
+            this.dataset.data,
+            this.dataset.destaque
+          );
+        });
+      });
+    });
   </script>
 
 </body>

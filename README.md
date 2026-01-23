@@ -22,6 +22,7 @@ Este projeto foi desenvolvido do zero como ferramenta de aprendizado prático, c
 ## 🚀 Tecnologias Utilizadas
 
 ### Backend
+
 - **Node.js** - Runtime JavaScript
 - **Express.js** - Framework web minimalista
 - **MySQL** - Banco de dados relacional
@@ -33,6 +34,7 @@ Este projeto foi desenvolvido do zero como ferramenta de aprendizado prático, c
 - **dotenv** - Variáveis de ambiente
 
 ### Frontend
+
 - **HTML5** - Estrutura semântica
 - **CSS3** - Responsividade e design moderno
 - **JavaScript vanilla** - Interatividade sem dependências desnecessárias
@@ -42,6 +44,7 @@ Este projeto foi desenvolvido do zero como ferramenta de aprendizado prático, c
 ## ✨ Funcionalidades Principais
 
 ### 👤 Autenticação & Autorização
+
 - ✅ Cadastro de usuários com validação
 - ✅ Login seguro com hash bcrypt
 - ✅ Sistema de sessões
@@ -49,6 +52,7 @@ Este projeto foi desenvolvido do zero como ferramenta de aprendizado prático, c
 - ✅ Logout
 
 ### 📰 Gerenciamento de Artigos
+
 - ✅ Criar, editar e deletar artigos
 - ✅ Upload automático de imagens de destaque
 - ✅ Sistema de categorias
@@ -56,16 +60,19 @@ Este projeto foi desenvolvido do zero como ferramenta de aprendizado prático, c
 - ✅ Rastreamento de artigos mais lidos
 
 ### 🏷️ Categorias
+
 - ✅ CRUD completo de categorias
 - ✅ Filtro por tema
 - ✅ Controle de ativação/desativação
 
 ### 👥 Gerenciamento de Usuários (Admin)
+
 - ✅ Criar, editar e deletar usuários
 - ✅ Controle de permissões
 - ✅ Edição segura de senhas
 
 ### 🔍 Busca
+
 - ✅ Busca de artigos por título/conteúdo
 - ✅ Filtro por categoria
 - ✅ Exibição de artigos mais lidos da semana
@@ -109,23 +116,28 @@ portal_de_noticias/
 ## 🚀 Como Instalar e Executar
 
 ### Pré-requisitos
+
 - Node.js (v14+)
 - MySQL (v5.7+)
 - npm ou yarn
 
 ### Passo 1: Clonar o repositório
+
 ```bash
 git clone https://github.com/seu-usuario/portal-de-noticias.git
 cd portal_de_noticias/backend
 ```
 
 ### Passo 2: Instalar dependências
+
 ```bash
 npm install
 ```
 
 ### Passo 3: Configurar variáveis de ambiente
+
 Crie um arquivo `.env` na raiz do projeto:
+
 ```env
 PORT=3000
 DB_HOST=localhost
@@ -137,9 +149,11 @@ NODE_ENV=development
 ```
 
 ### Passo 4: Criar banco de dados
+
 Execute o script SQL para criar as tabelas necessárias.
 
 ### Passo 5: Iniciar o servidor
+
 ```bash
 npm start
 ```
@@ -151,16 +165,19 @@ O servidor estará disponível em `http://localhost:3000`
 ## 📖 Como Usar
 
 ### Para Visitantes
+
 1. Acesse a página inicial para ver artigos
 2. Clique em um artigo para ler o conteúdo completo
 3. Use a busca para encontrar artigos específicos
 
 ### Para Usuários Cadastrados
+
 1. Faça login com suas credenciais
 2. Crie novos artigos via "Criar um artigo"
 3. Seus artigos aparecerão no portal
 
 ### Para Administradores
+
 1. Acesse as páginas de gerenciamento no menu "Configurações"
 2. **Menu Usuários** - Gerenciar usuários do sistema
 3. **Menu Artigos** - Editar/deletar artigos e destacá-los
@@ -198,6 +215,7 @@ Este projeto foi uma jornada de aprendizado que me permitiu dominar:
 Este é um projeto pessoal de aprendizado. Feedbacks e sugestões são bem-vindos!
 
 Sinta-se livre para:
+
 - 📝 Abrir issues
 - 🔄 Sugerir melhorias
 - 📧 Entrar em contato
@@ -208,7 +226,7 @@ Sinta-se livre para:
 
 - **LinkedIn**: [Michel Miranda](https://www.linkedin.com/in/michel-miranda-86b74936b/)
 - **WhatsApp**: [Conversar](https://wa.me/5571987776711?text=Olá%2C%20vi%20seu%20projeto%20TechNews%20e%20gostaria%20de%20conversar.)
-- **Email**: michel@example.com
+- **Email**: mmjcr05@gmail.com
 
 ---
 
@@ -220,4 +238,4 @@ Este projeto está sob a licença MIT - veja o arquivo LICENSE para detalhes.
 
 **Desenvolvido com ❤️ durante minha jornada de aprendizado em desenvolvimento web.**
 
-*Última atualização: Janeiro de 2026*
+_Última atualização: Janeiro de 2026_

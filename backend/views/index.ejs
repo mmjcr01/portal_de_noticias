@@ -61,7 +61,12 @@
       <%}else {%>
     <li><a href="/login">Fazer login</a></li>
   <% } %>
-  <li><a href="#">Contato</a></li>
+   <details class="text" style="color: black; margin-bottom: 5px;" >
+      <summary >Contatos</summary>
+      <a href="https://wa.me/5571987776711?text=Ol%C3%A1%2C%20vi%20seu%20projeto%20TechNews%20e%20gostaria%20de%20conversar."
+>Conversar sobre oportunidades via WhatsApp</a>
+      <a href="">LinkedIn</a>
+      </details>
   <li><a href="/login/logout">Sair</a></li>
   </ul>
   </div>
@@ -154,20 +159,21 @@
         .filter(artigo => artigo.nome_categoria === categoria.nome_categoria)
         .forEach(artigo => { %>
 
-        
+        <a href="/artigos/<%= artigo.id_artigo %>">
         <article class="grid grid-flow-col gap-16">
-          <a href="/artigos/<%= artigo.id_artigo %>">
+          
           <div class="conteudo">
             <h2 class="text-lg font-semibold"><%= artigo.titulo_artigo %></h2>
             <p class="text-sm"><%= artigo.resumo_artigo %></p>
           </div>
-          </a>
+         
+          
           <div >
             <img src="<%=base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>" style="width: 400px;">
           </div>
           
         </article>
-
+        </a>
       <% }) %>
     </div>
   <% }) %>

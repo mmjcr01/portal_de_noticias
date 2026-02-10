@@ -1,28 +1,24 @@
 /**
- * Portal de Notícias - Configuração de conexão MySQL (mysql2)
- * - Cria uma conexão simples com o banco `portal_noticias`
- * - Loga status da conexão ao iniciar
- * OBS: Em produção, mova credenciais para variáveis de ambiente (.env)
+ * Portal de Notícias - Configuração de conexão PostgreSQL (Supabase)
+ * - Usa URL de conexão completa
+ * - Cria pool de conexões para melhor performance
  */
-const mysql = require('mysql2');
+const { Pool } = require("pg");
 
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  port: process.env.DB_PORT,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  });
+pool.on("connect", () => {
+  console.log("✅ Conectado ao banco de dados Supabase com sucesso!");
+});
 
+pool.on("error", (err) => {
+  console.error("Erro na conexão com o banco de dados:", err);
+});
 
-  connection.connect((err) => {
-    if (err) {
-        console.error('Erro ao conectar ao banco de dados:', err);
-        return;
-    }
-    console.log('Conexão com o banco de dados estabelecida com sucesso!');
-  });
-
-module.exports = connection;
-
+// Para compatibilidade com código existente, exportamos pool
+module.exports = pool;

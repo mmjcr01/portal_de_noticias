@@ -65,7 +65,7 @@
 
   <main class="container">
    <div class="img-Artigo">
-    <img src="<%=base_imagem + artigo.imagem_destaque_artigo %> " alt="<%= artigo.titulo_artigo %>">
+    <img src="<%= artigo.imagem_destaque_artigo.startsWith('http') ? artigo.imagem_destaque_artigo : base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.titulo_artigo %>">
   
    </div>
    <div class="titulo-artigo">

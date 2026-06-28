@@ -44,32 +44,37 @@
   <!-- Menu dropdown -->
   <div class="menu-dropdown hidden">
     <ul>
-  <li><a href="#">Início</a></li>
+      <li><a href="/">Início</a></li>
 
-  <% if (login) { %>
-    <li><a href="#">Olá, <%= login.nome_usuario %>!</a></li>
-    <%if (login.admin_usuario === 2){ %>
-    <li><a href="/artigos/">Criar um artigo</a></li>
-    <% } %>
-    <% if (login.admin_usuario === 1){ %>
-      <details class="text" style="color: black;">
-      <summary >Configurações</summary>
-      <a href="usuarios/editar">Menu usuários</a>
-      <a href="artigos/editar">Menu artigos</a>
-      <a href="categorias/editar">Menu categorias</a>
-      </details>
+      <% if (login) { %>
+        <li><a href="#">Olá, <%= login.nome_usuario %>!</a></li>
+
+        <% if (login.admin_usuario === 1) { %>
+          <li><a href="/artigos/">Criar um artigo</a></li>
+          <details class="text" style="color: black;">
+            <summary>Configurações</summary>
+            <a href="/usuarios/editar">Gerenciar usuários</a>
+            <a href="/artigos/editar">Gerenciar artigos</a>
+            <a href="/categorias/editar">Gerenciar categorias</a>
+          </details>
+        <% } %>
+
+        <% if (login.admin_usuario === 2) { %>
+          <li><a href="/artigos/">Criar um artigo</a></li>
+        <% } %>
+
+        <li><a href="/login/logout">Sair</a></li>
+
+      <% } else { %>
+        <li><a href="/login">Fazer login</a></li>
       <% } %>
-      <%}else {%>
-    <li><a href="/login">Fazer login</a></li>
-  <% } %>
-   <details class="text" style="color: black; margin-bottom: 5px;" >
-      <summary >Contatos</summary>
-      <a href="https://wa.me/5571987776711?text=Ol%C3%A1%2C%20vi%20seu%20projeto%20TechNews%20e%20gostaria%20de%20conversar."
->Conversar sobre oportunidades via WhatsApp</a>
-      <a href="https://www.linkedin.com/in/michel-miranda-86b74936b/">LinkedIn</a>
+
+      <details class="text" style="color: black; margin-bottom: 5px;">
+        <summary>Contatos</summary>
+        <a href="https://wa.me/5571987776711?text=Ol%C3%A1%2C%20vi%20seu%20projeto%20TechNews%20e%20gostaria%20de%20conversar.">WhatsApp</a>
+        <a href="https://www.linkedin.com/in/michel-miranda-86b74936b/">LinkedIn</a>
       </details>
-  <li><a href="/login/logout">Sair</a></li>
-  </ul>
+    </ul>
   </div>
 
   <!-- Campo de busca -->
@@ -100,7 +105,7 @@
         <% if (artigoPrincipal) { %>
         <div class="card-destaque">
           <a href="/artigos/<%= artigoPrincipal.id_artigo %>"> 
-          <img src="<%= base_imagem + artigoPrincipal.imagem_destaque_artigo %>" alt="<%= artigoPrincipal.alt_imagem %>">
+          <img src="<%= artigoPrincipal.imagem_destaque_artigo.startsWith('http') ? artigoPrincipal.imagem_destaque_artigo : base_imagem + artigoPrincipal.imagem_destaque_artigo %>" alt="<%= artigoPrincipal.alt_imagem %>">
             <div class="card-overlay">
                 <span class="content-tag"><%= artigoPrincipal.nome_categoria %></span>
                 <h2 class="titulo-principal"><%= artigoPrincipal.resumo_artigo %></h2>
@@ -115,7 +120,7 @@
         <% if (artigosSecundarios.length > 0) {
             artigosSecundarios.forEach(artigo => { %>
             <div class="card-secundario">
-                <img src="<%= base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>">
+                <img src="<%= artigo.imagem_destaque_artigo.startsWith('http') ? artigo.imagem_destaque_artigo : base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>">
                 <a href="/artigos/<%= artigo.id_artigo %>">
                 <div class="card-overlay">
                    
@@ -141,7 +146,7 @@
         <figure>
           <a href="/artigos/<%= artigo.id_artigo %>">
           <span class="content-tag"><%= artigo.nome_categoria %></span>
-          <img style="max-height: 250px;"src="<%= base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>">
+          <img style="max-height: 250px;"src="<%= artigo.imagem_destaque_artigo.startsWith('http') ? artigo.imagem_destaque_artigo : base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>">
           <p><%= artigo.resumo_artigo %></p>
           </a>
         </figure>
@@ -170,7 +175,7 @@
          
           
           <div >
-            <img src="<%=base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>" style="width: 400px;">
+            <img src="<%= artigo.imagem_destaque_artigo.startsWith('http') ? artigo.imagem_destaque_artigo : base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>" style="width: 400px;">
           </div>
           
         </article>

@@ -44,19 +44,8 @@ exports.uploadArquivo = uploadArquivo;
  * Lista todas as categorias ordenadas por nome.
  * @returns {Promise<Array>} categorias
  */
-exports.buscarCategorias = () => {
-  return new Promise((resolve, reject) => {
-    db.query(
-      "SELECT * FROM categorias order by nome_categoria",
-      (err, results) => {
-        if (err) {
-          console.error("Erro ao listar categorias:", err);
-          return reject(err);
-        }
-        resolve(results);
-      },
-    );
-  });
+exports.buscarCategorias = async () => {
+  return db.getAll("categorias");
 };
 
 // Função para buscar autores
@@ -64,16 +53,8 @@ exports.buscarCategorias = () => {
  * Lista todos os autores.
  * @returns {Promise<Array>} autores
  */
-exports.buscarUsuarios = () => {
-  return new Promise((resolve, reject) => {
-    db.query("SELECT * FROM usuarios", (err, results) => {
-      if (err) {
-        console.error("Erro ao listar autores:", err);
-        return reject(err);
-      }
-      resolve(results);
-    });
-  });
+exports.buscarUsuarios = async () => {
+  return db.getAll("usuarios");
 };
 
 // Função para listar artigos
@@ -84,31 +65,17 @@ exports.buscarUsuarios = () => {
  */
 exports.listarArtigos = async (req, res) => {
   const base_imagem = "/css/assets/images/";
-  try {
-    // Buscar artigos
-    const artigos = await new Promise((resolve, reject) => {
-      db.query(
-        "SELECT * FROM vw_artigos order by nome_categoria",
-        (err, results) => {
-          if (err) {
-            console.error("Erro ao listar artigos:", err);
-            return reject(err);
-          }
-          resolve(results);
-        },
-      );
-    });
 
-    // Buscar autores
+  try {
+    const artigos = await db.getArtigosView();
     const usuarios = await exports.buscarUsuarios();
     const categorias = await exports.buscarCategorias();
 
-    // Renderizar a view com os dados
     res.render("artigos_editor", {
       artigos,
       usuarios,
       categorias,
-      base_imagem: base_imagem,
+      base_imagem,
     });
   } catch (err) {
     console.error("Erro ao listar artigos ou autores:", err);
@@ -124,37 +91,41 @@ exports.listarArtigos = async (req, res) => {
  * @param {import('express').Request} req - req.params.id_artigo
  * @param {import('express').Response} res
  */
-exports.buscar_artigo = (req, res) => {
+exports.buscar_artigo = async (req, res) => {
   const id_artigo = req.params.id_artigo;
   const base_imagem = "/css/assets/images/";
   const login = req.session.user;
 
-  db.query(
-    "SELECT * FROM vw_artigos WHERE id_artigo = ?",
-    [id_artigo],
-    (err, results) => {
-      if (err) {
-        return res.status(500).json({ error: "Erro na consulta ao banco" });
-      }
-      if (!results[0]) {
-        return res.status(404).send("Artigo não encontrado");
-      }
-      if (login) {
-        const id_usuario = login.id_usuario;
-        const id_categoria = results[0].id_categoria;
-        sessaoUsuarioController.artigoClicado(
-          id_usuario,
-          id_artigo,
-          id_categoria,
-        );
-      }
-      res.render("artigo", {
-        login: login || null,
-        artigo: results[0], // Envia o primeiro resultado como `artigo`
-        base_imagem,
-      });
-    },
-  );
+  try {
+    const artigo = await db.getByField("artigos", "id_artigo", id_artigo);
+
+    if (!artigo) {
+      return res.status(404).send("Artigo não encontrado");
+    }
+
+    if (login) {
+      const id_usuario = login.id_usuario;
+      const id_categoria = artigo.id_categoria;
+      sessaoUsuarioController.artigoClicado(
+        id_usuario,
+        id_artigo,
+        id_categoria,
+      );
+    }
+
+    res.render("artigo", {
+      login: login || null,
+      artigo: {
+        ...artigo,
+        nome_categoria: "",
+        nome_usuario: "",
+      },
+      base_imagem,
+    });
+  } catch (err) {
+    console.error("Erro ao buscar artigo:", err);
+    return res.status(500).json({ error: "Erro na consulta ao banco" });
+  }
 };
 
 /**
@@ -162,46 +133,45 @@ exports.buscar_artigo = (req, res) => {
  * @param {import('express').Request} req - req.file.filename (imagem), campos do body
  * @param {import('express').Response} res
  */
-exports.criar_artigo = (req, res) => {
+exports.criar_artigo = async (req, res) => {
   const titulo_artigo = req.body.titulo_artigo;
   const conteudo_artigo = req.body.conteudo_artigo;
   const resumo_artigo = req.body.resumo_artigo;
   const alt_imagem = req.body.alt_imagem || "Imagem do artigo";
-  const data_publicacao =
-    req.body.data_publicacao || new Date().toISOString().split("T")[0];
+  const data_publicacao = req.body.data_publicacao || null;
   const id_categoria = req.body.id_categoria;
-  const id_usuario = req.body.id_usuario || 1;
+  const id_usuario = req.body.id_usuario || "1";
   const destaque = req.body.destaque || 0;
   const imagem_destaque_artigo = req.file
     ? req.file.filename
     : req.body.imagem_destaque_artigo;
 
-  db.query(
-    "INSERT INTO `portal_noticias`.`artigos` (titulo_artigo, resumo_artigo, conteudo_artigo, alt_imagem, id_categoria , id_usuario, data_publicacao, destaque, imagem_destaque_artigo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-    [
-      titulo_artigo,
-      resumo_artigo,
-      conteudo_artigo,
-      alt_imagem,
-      id_categoria,
-      id_usuario,
-      data_publicacao,
-      destaque,
-      imagem_destaque_artigo,
-    ],
-    (err, results) => {
-      if (err) {
-        console.error("Erro ao criar artigo:", err);
-        return res.renderError(
-          "Erro ao criar artigo. Verifique os dados e tente novamente.",
-          "/",
-        );
-      }
+  try {
+    await db.create(
+      "artigos",
+      {
+        titulo_artigo,
+        resumo_artigo,
+        conteudo_artigo,
+        alt_imagem,
+        id_categoria,
+        id_usuario,
+        data_publicacao,
+        destaque,
+        imagem_destaque_artigo,
+      },
+      "id_artigo",
+    );
 
-      req.session.success = "Artigo criado com sucesso!";
-      res.redirect("/");
-    },
-  );
+    req.session.success = "Artigo criado com sucesso!";
+    res.redirect("/");
+  } catch (err) {
+    console.error("Erro ao criar artigo:", err);
+    return res.renderError(
+      "Erro ao criar artigo. Verifique os dados e tente novamente.",
+      "/",
+    );
+  }
 };
 
 /**
@@ -209,7 +179,7 @@ exports.criar_artigo = (req, res) => {
  * @param {import('express').Request} req - req.file.filename (opcional), body inclui id_artigo
  * @param {import('express').Response} res
  */
-exports.atualizar_artigo = (req, res) => {
+exports.atualizar_artigo = async (req, res) => {
   const id_artigo = req.body.id_artigo;
   const titulo_artigo = req.body.titulo_artigo;
   const conteudo_artigo = req.body.conteudo_artigo;
@@ -223,9 +193,8 @@ exports.atualizar_artigo = (req, res) => {
     ? req.file.filename
     : req.body.imagem_destaque_artigo;
 
-  db.query(
-    "UPDATE artigos SET titulo_artigo = ?, resumo_artigo = ?, conteudo_artigo = ?, alt_imagem = ? , id_categoria = ? , id_autor = ? , data_publicacao =  ? ,destaque = ?, imagem_destaque_artigo = ?  WHERE id_artigo = ? ",
-    [
+  try {
+    await db.updateByField("artigos", "id_artigo", id_artigo, {
       titulo_artigo,
       resumo_artigo,
       conteudo_artigo,
@@ -235,20 +204,17 @@ exports.atualizar_artigo = (req, res) => {
       data_publicacao,
       destaque,
       imagem_destaque_artigo,
-      id_artigo,
-    ],
-    (err, results) => {
-      if (err) {
-        console.error("Erro ao atualizar artigo:", err);
-        return res.renderError(
-          "Erro ao atualizar artigo. Tente novamente.",
-          "/artigos/editar",
-        );
-      }
-      req.session.success = "Artigo atualizado com sucesso!";
-      res.redirect("/artigos/editar");
-    },
-  );
+    });
+
+    req.session.success = "Artigo atualizado com sucesso!";
+    res.redirect("/artigos/editar");
+  } catch (err) {
+    console.error("Erro ao atualizar artigo:", err);
+    return res.renderError(
+      "Erro ao atualizar artigo. Tente novamente.",
+      "/artigos/editar",
+    );
+  }
 };
 
 /**
@@ -256,20 +222,20 @@ exports.atualizar_artigo = (req, res) => {
  * @param {import('express').Request} req - req.body.id_artigo
  * @param {import('express').Response} res
  */
-exports.deletar_artigo = (req, res) => {
+exports.deletar_artigo = async (req, res) => {
   const id = req.body.id_artigo;
 
-  db.query("DELETE FROM artigos WHERE id_artigo = ?", [id], (err, results) => {
-    if (err) {
-      console.error("Erro ao deletar artigo:", err);
-      return res.renderError(
-        "Erro ao deletar artigo. Tente novamente.",
-        "/artigos/editar",
-      );
-    }
+  try {
+    await db.deleteByField("artigos", "id_artigo", id);
     req.session.success = "Artigo deletado com sucesso!";
     res.redirect("/artigos/editar");
-  });
+  } catch (err) {
+    console.error("Erro ao deletar artigo:", err);
+    return res.renderError(
+      "Erro ao deletar artigo. Tente novamente.",
+      "/artigos/editar",
+    );
+  }
 };
 
 /**
@@ -280,7 +246,7 @@ exports.deletar_artigo = (req, res) => {
 exports.cadastro = async (req, res) => {
   const categorias = await exports.buscarCategorias();
   res.render("cadastro_artigo", {
-    categorias: categorias,
+    categorias,
     login: req.session.user,
   });
 };

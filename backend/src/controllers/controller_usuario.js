@@ -11,27 +11,33 @@ const salt = bcrypt.genSaltSync(10);
  * @param {import('express').Request} req - Campos: nome_usuario, email_usuario, senha_usuario, admin_usuario
  * @param {import('express').Response} res
  */
-exports.cadastrarUsuario = (req, res) => {
+exports.cadastrarUsuario = async (req, res) => {
   const nome_usuario = req.body.nome_usuario;
   const email_usuario = req.body.email_usuario;
   const hashSenha = bcrypt.hashSync(req.body.senha_usuario, salt);
   const admin_usuario = req.body.admin_usuario;
 
-  db.query(
-    "INSERT INTO `portal_noticias`.`usuarios` (nome_usuario,email_usuario,senha_usuario,admin_usuario) VALUES(?,?,?,?)",
-    [nome_usuario, email_usuario, hashSenha, admin_usuario],
-    (err, results) => {
-      if (err) {
-        console.error("Erro ao criar usuario:", err);
-        return res.renderError(
-          "Erro ao criar usuário. Este email pode já estar registrado.",
-          "/usuarios/editar",
-        );
-      }
-      req.session.success = "Usuário criado com sucesso!";
-      res.redirect("/usuarios/editar");
-    },
-  );
+  try {
+    await db.create(
+      "usuarios",
+      {
+        nome_usuario,
+        email_usuario,
+        senha_usuario: hashSenha,
+        admin_usuario,
+      },
+      "id_usuario",
+    );
+
+    req.session.success = "Usuário criado com sucesso!";
+    res.redirect("/usuarios/editar");
+  } catch (err) {
+    console.error("Erro ao criar usuario:", err);
+    return res.renderError(
+      "Erro ao criar usuário. Este email pode já estar registrado.",
+      "/usuarios/editar",
+    );
+  }
 };
 
 /**
@@ -40,27 +46,30 @@ exports.cadastrarUsuario = (req, res) => {
  * @param {import('express').Request} req - Campos: id_usuario, nome_usuario, email_usuario, senha_usuario, admin_usuario
  * @param {import('express').Response} res
  */
-exports.atualizarUsuario = (req, res) => {
+exports.atualizarUsuario = async (req, res) => {
   const nome_usuario = req.body.nome_usuario;
   const email_usuario = req.body.email_usuario;
   const hashSenha = bcrypt.hashSync(req.body.senha_usuario, salt);
   const admin_usuario = req.body.admin_usuario;
   const id_usuario = req.body.id_usuario;
-  db.query(
-    "UPDATE `portal_noticias`.`usuarios`SET `nome_usuario` = ?,`email_usuario` = ?,`senha_usuario` = ?, `admin_usuario` = ? WHERE `id_usuario` = ?;",
-    [nome_usuario, email_usuario, hashSenha, admin_usuario, id_usuario],
-    (err, results) => {
-      if (err) {
-        console.error("erro ao atualizar usuario", err);
-        return res.renderError(
-          "Erro ao atualizar usuário. Tente novamente.",
-          "/usuarios/editar",
-        );
-      }
-      req.session.success = "Usuário atualizado com sucesso!";
-      res.redirect("/usuarios/editar");
-    },
-  );
+
+  try {
+    await db.updateByField("usuarios", "id_usuario", id_usuario, {
+      nome_usuario,
+      email_usuario,
+      senha_usuario: hashSenha,
+      admin_usuario,
+    });
+
+    req.session.success = "Usuário atualizado com sucesso!";
+    res.redirect("/usuarios/editar");
+  } catch (err) {
+    console.error("erro ao atualizar usuario", err);
+    return res.renderError(
+      "Erro ao atualizar usuário. Tente novamente.",
+      "/usuarios/editar",
+    );
+  }
 };
 
 /**
@@ -68,17 +77,17 @@ exports.atualizarUsuario = (req, res) => {
  * @param {import('express').Request} req
  * @param {import('express').Response} res
  */
-exports.buscarUsuarios = (req, res) => {
-  db.query("select * from usuarios; ", (err, results) => {
-    if (err) {
-      console.error("Erro ao buscar usuario:", err);
-      return res.renderError(
-        "Erro ao carregar usuários. Tente novamente.",
-        "/usuarios/editar",
-      );
-    }
-    res.render("usuarios_editor", { usuarios: results });
-  });
+exports.buscarUsuarios = async (req, res) => {
+  try {
+    const usuarios = await db.getAll("usuarios");
+    res.render("usuarios_editor", { usuarios });
+  } catch (err) {
+    console.error("Erro ao buscar usuario:", err);
+    return res.renderError(
+      "Erro ao carregar usuários. Tente novamente.",
+      "/usuarios/editar",
+    );
+  }
 };
 
 /**
@@ -86,21 +95,18 @@ exports.buscarUsuarios = (req, res) => {
  * @param {import('express').Request} req - req.body.id_usuario
  * @param {import('express').Response} res
  */
-exports.deletarUsuario = (req, res) => {
-  id_usuario = req.body.id_usuario;
-  db.query(
-    "DELETE FROM `portal_noticias`.`usuarios` WHERE id_usuario = ?;",
-    [id_usuario],
-    (err, results) => {
-      if (err) {
-        console.error("Erro ao deletar usuario:", err);
-        return res.renderError(
-          "Erro ao deletar usuário. Tente novamente.",
-          "/usuarios/editar",
-        );
-      }
-      req.session.success = "Usuário deletado com sucesso!";
-      res.redirect("/usuarios/editar");
-    },
-  );
+exports.deletarUsuario = async (req, res) => {
+  const id_usuario = req.body.id_usuario;
+
+  try {
+    await db.deleteByField("usuarios", "id_usuario", id_usuario);
+    req.session.success = "Usuário deletado com sucesso!";
+    res.redirect("/usuarios/editar");
+  } catch (err) {
+    console.error("Erro ao deletar usuario:", err);
+    return res.renderError(
+      "Erro ao deletar usuário. Tente novamente.",
+      "/usuarios/editar",
+    );
+  }
 };

@@ -273,7 +273,7 @@
           <td><%= artigo.resumo_artigo %></td>
           <td><%= artigo.conteudo_artigo %></td>
           <td>
-            <img src="<%=base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>" style="max-width: 100px;">
+            <img src="<%= artigo.imagem_destaque_artigo.startsWith('http') ? artigo.imagem_destaque_artigo : base_imagem + artigo.imagem_destaque_artigo %>" alt="<%= artigo.alt_imagem %>" style="max-width: 100px;">
           </td>
           <td><%= artigo.nome_categoria %></td>
           <td><%= artigo.nome_autor %></td>

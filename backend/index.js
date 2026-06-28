@@ -32,6 +32,12 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.nonce}'`],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "https://picsum.photos",
+          "https://fastly.picsum.photos", // CDN que o picsum usa pra servir as imagens
+        ],
       },
     },
   }),

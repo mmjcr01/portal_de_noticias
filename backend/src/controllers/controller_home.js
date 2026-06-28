@@ -7,24 +7,28 @@
  * - Renderizar a página inicial com artigos, destaque, categorias e métricas
  * - Buscar artigos por palavra-chave
  */
-const db = require('../database/db.js');
-
+const db = require("../database/db.js");
 
 // Função para buscar categorias
 /**
  * Busca categorias ativas que possuem artigos sem destaque.
  * @returns {Promise<Array>} Lista de categorias
  */
-exports.buscarCategorias = async() => {
-  return new Promise((resolve, reject) => {
-    db.query('select distinct c.id_categoria, c.nome_categoria, c.descricao_categoria, c.cor_tema, c.ativo from categorias as c, artigos as a where c.id_categoria = a.id_categoria and a.destaque = 0;', (err, results) => {
-      if (err) {
-        console.error('Erro ao listar categorias:', err);
-        return reject(err);
-      }
-      resolve(results);
-    });
-  });
+exports.buscarCategorias = async () => {
+  const categorias = await db.getAll("categorias");
+  const artigos = await db.getArtigosView();
+
+  const idsCategoriasComArtigosSemDestaque = new Set(
+    artigos
+      .filter((artigo) => Number(artigo.destaque) === 0)
+      .map((artigo) => String(artigo.id_categoria || "")),
+  );
+
+  return categorias.filter((categoria) =>
+    idsCategoriasComArtigosSemDestaque.has(
+      String(categoria.id_categoria || ""),
+    ),
+  );
 };
 
 /**
@@ -33,24 +37,9 @@ exports.buscarCategorias = async() => {
  * @param {import('express').Response} res
  * @returns {Promise<Array>} Lista de artigos em destaque
  */
-exports.listarArtigosDestaque = async (req, res) => {
-  const base_imagem = "/css/assets/images/";
-  try {
-    const artigos_destaque = await new Promise((resolve, reject) => {
-      db.query('SELECT * FROM vw_artigos where destaque > 0 order by nome_categoria', (err, results) => {
-        if (err) {
-          console.error('Erro ao listar artigos:', err);
-          return reject(err);
-        }
-        resolve(results);
-      });
-    });
-
-    return artigos_destaque; // Retorna os dados corretamente
-  } catch (err) {
-    console.error('Erro ao listar artigos ou autores:', err);
-    throw err; // Lança o erro para ser tratado na função chamadora
-  }
+exports.listarArtigosDestaque = async () => {
+  const artigos = await db.getArtigosView();
+  return artigos.filter((artigo) => Number(artigo.destaque) > 0);
 };
 
 /**
@@ -58,37 +47,37 @@ exports.listarArtigosDestaque = async (req, res) => {
  * @returns {Promise<Array>} Lista dos 4 artigos mais acessados
  */
 exports.maisLidosSemana = async () => {
-  const sql = `
-    SELECT 
-        v.id_artigo,
-        v.titulo_artigo,
-        v.resumo_artigo,
-        v.conteudo_artigo,
-        v.imagem_destaque_artigo,
-        v.alt_imagem,
-        v.destaque,
-        v.id_categoria,
-        v.nome_categoria,
-        v.id_usuario,
-        v.nome_usuario,
-        COUNT(s.id_artigo) AS total_acessos
-    FROM vw_artigos v
-    JOIN sessao_usuarios s ON s.id_artigo = v.id_artigo
-    WHERE s.data_hora_acesso >= DATE_SUB(NOW(), INTERVAL 7 DAY)
-    GROUP BY v.id_artigo
-    ORDER BY total_acessos DESC
-    LIMIT 4;
-  `;
+  const sessoes = await db.getAll("sessao_usuarios");
+  const artigos = await db.getArtigosView();
 
-  return new Promise((resolve, reject) => {
-    db.query(sql, (err, results) => {
-      if (err) {
-        console.error("Erro ao buscar os mais lidos:", err);
-        return reject(err);
-      }
-      resolve(results);
-    });
+  const limite = 7 * 24 * 60 * 60 * 1000;
+  const agora = Date.now();
+
+  const contagem = new Map();
+
+  sessoes.forEach((sessao) => {
+    const dataAcesso = new Date(
+      sessao.data_hora_acesso || sessao.data_hora_acesso || 0,
+    );
+    if (Number.isNaN(dataAcesso.getTime())) {
+      return;
+    }
+
+    if (agora - dataAcesso.getTime() <= limite) {
+      const idArtigo = String(sessao.id_artigo || "");
+      contagem.set(idArtigo, (contagem.get(idArtigo) || 0) + 1);
+    }
   });
+
+  const artigosMaisLidos = artigos
+    .map((artigo) => ({
+      ...artigo,
+      total_acessos: contagem.get(String(artigo.id_artigo || "")) || 0,
+    }))
+    .sort((a, b) => b.total_acessos - a.total_acessos)
+    .slice(0, 4);
+
+  return artigosMaisLidos;
 };
 
 /**
@@ -99,27 +88,27 @@ exports.maisLidosSemana = async () => {
  */
 exports.listarArtigos = async (req, res) => {
   const base_imagem = "/css/assets/images/";
-  try {
-    // Buscar artigos sem destaque
-    const artigos = await new Promise((resolve, reject) => {
-      db.query('SELECT * FROM vw_artigos where destaque = 0 order by nome_categoria;', (err, results) => {
-        if (err) {
-          console.error('Erro ao listar artigos:', err);
-          return reject(err);
-        }
-        resolve(results);
-      });
-    });
 
-    // Buscar artigos com destaque
-    const artigos_destaque = await exports.listarArtigosDestaque(req, res);
+  try {
+    const artigos = await db.getArtigosView();
+    const artigosSemDestaque = artigos.filter(
+      (artigo) => Number(artigo.destaque) === 0,
+    );
+    const artigos_destaque = await exports.listarArtigosDestaque();
     const categorias = await exports.buscarCategorias();
     const artigosMaisLidos = await exports.maisLidosSemana();
-    // Renderizar a view com os dados
-    res.render("index", { login: req.session.user|| null, artigos, artigos_destaque, artigosMaisLidos, categorias, base_imagem });
+
+    res.render("index", {
+      login: req.session.user || null,
+      artigos: artigosSemDestaque,
+      artigos_destaque,
+      artigosMaisLidos,
+      categorias,
+      base_imagem,
+    });
   } catch (err) {
-    console.error('Erro ao listar artigos ou autores:', err);
-    res.status(500).json({ error: 'Erro ao listar artigos ou autores' });
+    console.error("Erro ao listar artigos ou autores:", err);
+    res.status(500).json({ error: "Erro ao listar artigos ou autores" });
   }
 };
 
@@ -130,41 +119,46 @@ exports.listarArtigos = async (req, res) => {
  * @returns {Promise<void>}
  */
 exports.buscar_artigo_por_categoria = async (req, res) => {
-  const id_categoria = req.params.id_categoria; 
-  try{
-  const artigos = await new promise((resolve, reject) => { 
-  db.query('SELECT * FROM vw_artigos WHERE id_categoria = ?', [id_categoria], (err, results) => {
-    if (err) {
-      
-      return reject(res.status(500).json({ error: 'Erro na consulta ao banco' }));
-    }
-    resolve(results);
-  }); 
- });
-   
-  }  catch(err) {
-    console.error('Erro ao listar artigos:', err);
-    res.status(500).json({ error: 'Erro ao listar artigos' });
-  }
-} 
+  const id_categoria = req.params.id_categoria;
 
+  try {
+    const artigos = await db.getArtigosView();
+    const resultados = artigos.filter(
+      (artigo) => String(artigo.id_categoria || "") === String(id_categoria),
+    );
+
+    res.json(resultados);
+  } catch (err) {
+    console.error("Erro ao listar artigos:", err);
+    res.status(500).json({ error: "Erro ao listar artigos" });
+  }
+};
 
 /**
  * Busca artigos por palavra-chave no resumo.
  * @param {import('express').Request} req - req.body.busca
  * @param {import('express').Response} res
  */
-exports.buscarArtigos = (req,res) => {
+exports.buscarArtigos = async (req, res) => {
   const busca = req.body.busca;
   const base_imagem = "/css/assets/images/";
-  
-  db.query('select * from artigos where resumo_artigo like CONCAT("%", ?, "%");', [busca], (err, results) =>{
-  if (err) {
-      console.error('Erro ao listar artigos:', err);
-      return reject(err);
+
+  try {
+    const artigos = await db.getArtigosView();
+    const resultados = artigos.filter((artigo) =>
+      String(artigo.resumo_artigo || "")
+        .toLowerCase()
+        .includes(busca.toLowerCase()),
+    );
+
+    res.render("buscar_artigos", {
+      login: req.session.user || null,
+      artigos: resultados,
+      palavra_chave: busca,
+      base_imagem,
+    });
+  } catch (err) {
+    console.error("Erro ao listar artigos:", err);
+    res.status(500).json({ error: "Erro ao listar artigos" });
   }
-  console.log(results[0]);
-  res.render("buscar_artigos", {login: req.session.user|| null, artigos: results, palavra_chave: busca, base_imagem});
-});
 };
-  

@@ -14,18 +14,19 @@ const bcrypt = require("bcrypt");
  * @returns {Promise<Array>} Lista de categorias
  */
 exports.buscarCategorias = async () => {
-  return new Promise((resolve, reject) => {
-    db.query(
-      "select distinct c.id_categoria, c.nome_categoria, c.descricao_categoria, c.cor_tema, c.ativo from categorias as c, artigos as a where c.id_categoria = a.id_categoria and a.destaque = 0;",
-      (err, results) => {
-        if (err) {
-          console.error("Erro ao listar categorias:", err);
-          return reject(err);
-        }
-        resolve(results);
-      },
-    );
-  });
+  const categorias = await db.getAll("categorias");
+  const artigos = await db.getArtigosView();
+  const artigosSemDestaque = artigos.filter(
+    (artigo) => Number(artigo.destaque) === 0,
+  );
+
+  const idsCategorias = new Set(
+    artigosSemDestaque.map((artigo) => String(artigo.id_categoria || "")),
+  );
+
+  return categorias.filter((categoria) =>
+    idsCategorias.has(String(categoria.id_categoria || "")),
+  );
 };
 
 /**
@@ -34,27 +35,9 @@ exports.buscarCategorias = async () => {
  * @param {import('express').Response} res
  * @returns {Promise<Array>} Artigos em destaque
  */
-exports.listarArtigosDestaque = async (req, res) => {
-  const base_imagem = "/css/assets/images/";
-  try {
-    const artigos_destaque = await new Promise((resolve, reject) => {
-      db.query(
-        "SELECT * FROM vw_artigos where destaque > 0 order by nome_categoria",
-        (err, results) => {
-          if (err) {
-            console.error("Erro ao listar artigos:", err);
-            return reject(err);
-          }
-          resolve(results);
-        },
-      );
-    });
-
-    return artigos_destaque; // Retorna os dados corretamente
-  } catch (err) {
-    console.error("Erro ao listar artigos ou autores:", err);
-    throw err; // Lança o erro para ser tratado na função chamadora
-  }
+exports.listarArtigosDestaque = async () => {
+  const artigos = await db.getArtigosView();
+  return artigos.filter((artigo) => Number(artigo.destaque) > 0);
 };
 
 /**
@@ -62,26 +45,8 @@ exports.listarArtigosDestaque = async (req, res) => {
  * @returns {Promise<Array>} Artigos sem destaque
  */
 exports.listarArtigos = async () => {
-  try {
-    // Buscar artigos sem destaque
-    const artigos = await new Promise((resolve, reject) => {
-      db.query(
-        "SELECT * FROM vw_artigos where destaque = 0 order by nome_categoria;",
-        (err, results) => {
-          if (err) {
-            console.error("Erro ao listar artigos:", err);
-            return reject(err);
-          }
-          resolve(results);
-        },
-      );
-    });
-
-    return artigos;
-  } catch (err) {
-    console.error("Erro ao listar artigos ou autores:", err);
-    return { error: "Erro ao listar artigos ou autores" };
-  }
+  const artigos = await db.getArtigosView();
+  return artigos.filter((artigo) => Number(artigo.destaque) === 0);
 };
 
 /**
@@ -89,54 +54,45 @@ exports.listarArtigos = async () => {
  * @param {import('express').Request} req - Campos: email_usuario, senha_usuario
  * @param {import('express').Response} res
  */
-exports.loginAutenticacao = (req, res) => {
+exports.loginAutenticacao = async (req, res) => {
   const email_usuario = req.body.email_usuario;
   const senha_usuario = req.body.senha_usuario;
-  const base_imagem = "/css/assets/images/";
 
-  db.query(
-    "select * from usuarios where email_usuario = ?",
-    [email_usuario],
-    (err, results) => {
-      if (err) {
-        console.error("Erro no servidor:", err);
-        return res.renderError(
-          "Erro ao conectar ao servidor. Tente novamente.",
-          "/login",
-        );
-      }
-      if (!results || results.length === 0) {
-        return res.renderError(
-          "Usuário não encontrado. Verifique seu email.",
-          "/login",
-        );
-      }
+  try {
+    const usuario = await db.getByField(
+      "usuarios",
+      "email_usuario",
+      email_usuario,
+    );
 
-      const hash = results[0].senha_usuario;
-      // Usando callback do bcrypt
-      bcrypt.compare(senha_usuario, hash, (err, ismatch) => {
-        if (err) {
-          console.error("Erro ao comparar senhas:", err);
-          return res.renderError(
-            "Erro ao autenticar. Tente novamente.",
-            "/login",
-          );
-        }
-        if (!ismatch) {
-          return res.renderError("Senha incorreta. Tente novamente.", "/login");
-        }
+    if (!usuario) {
+      return res.renderError(
+        "Usuário não encontrado. Verifique seu email.",
+        "/login",
+      );
+    }
 
-        // Só se a senha estiver correta
-        req.session.user = {
-          id_usuario: results[0].id_usuario,
-          nome_usuario: results[0].nome_usuario,
-          email_usuario: results[0].email_usuario,
-          admin_usuario: results[0].admin_usuario,
-        };
-        res.redirect("/");
-      });
-    },
-  );
+    const hash = usuario.senha_usuario;
+    const ismatch = await bcrypt.compare(senha_usuario, hash);
+
+    if (!ismatch) {
+      return res.renderError("Senha incorreta. Tente novamente.", "/login");
+    }
+
+    req.session.user = {
+      id_usuario: usuario.id_usuario,
+      nome_usuario: usuario.nome_usuario,
+      email_usuario: usuario.email_usuario,
+      admin_usuario: usuario.admin_usuario,
+    };
+    res.redirect("/");
+  } catch (err) {
+    console.error("Erro no servidor:", err);
+    return res.renderError(
+      "Erro ao conectar ao servidor. Tente novamente.",
+      "/login",
+    );
+  }
 };
 
 /**

@@ -17,6 +17,7 @@ const routesHome = require("./src/routes/routesHome.js");
 const routesUsuarios = require("./src/routes/routesUsuarios.js");
 const routesCadastro = require("./src/routes/routesCadastro.js");
 const routesLogin = require("./src/routes/routesLogin.js");
+const path = require("path");
 const port = process.env.PORT || 3000;
 
 // Middleware para gerar nonce
@@ -67,8 +68,8 @@ app.use(
   }),
 );
 
-app.set("view engine", "ejs");
 
+app.set("views", path.join(__dirname, "views"));
 // Middleware para flash messages (erros e sucessos)
 app.use((req, res, next) => {
   res.locals.error = req.session.error || null;

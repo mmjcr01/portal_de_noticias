@@ -6,7 +6,7 @@
  * - Renderização da view de login após cadastro
  */
 const db = require("../database/db");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const salt = bcrypt.genSaltSync(10);
 
 /**

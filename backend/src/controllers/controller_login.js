@@ -7,7 +7,7 @@ const db = require("../database/db");
  * - Criação de sessão do usuário
  * - Renderização de login e logout
  */
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 /**
  * Busca categorias ativas que possuem artigos sem destaque.

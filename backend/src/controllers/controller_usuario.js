@@ -3,7 +3,7 @@
  * CRUD de usuários com hash de senha e renderização do editor.
  */
 const db = require("../database/db");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const salt = bcrypt.genSaltSync(10);
 
 /**

@@ -69,6 +69,7 @@ app.use(
 );
 
 
+app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 // Middleware para flash messages (erros e sucessos)
 app.use((req, res, next) => {

@@ -42,17 +42,15 @@ app.use(
     },
   }),
 );
-
+app.set('trust proxy', 1);
 // Segurança: Rate Limiting para prevenir ataques de força bruta
 if (process.env.NODE_ENV === "production") {
   const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 100, // Limita a 100 requisições por IP
+    windowMs: 15 * 60 * 1000, 
+    max: 100, 
     message: "Muitas tentativas de acesso. Tente novamente mais tarde.",
   });
   app.use(limiter);
-} else {
-  console.log("⚠️  Rate limiter desabilitado em desenvolvimento");
 }
 
 app.use(
@@ -90,7 +88,7 @@ app.use((req, res, next) => {
 });
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/categorias", routesCategorias);
 app.use("/artigos", routesArtigos);

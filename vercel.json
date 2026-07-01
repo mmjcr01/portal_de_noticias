@@ -3,12 +3,21 @@
   "builds": [
     {
       "src": "backend/index.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["backend/views/**", "backend/public/**"]
-      }
+      "use": "@vercel/node"
     }
   ],
-  "routes": [{ "src": "/(.*)", "dest": "backend/index.js" }],
-  "env": { "NODE_ENV": "production" }
+  "routes": [
+    {
+      "src": "/css/(.*)",
+      "dest": "/backend/public/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/backend/public/js/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "backend/index.js"
+    }
+  ]
 }

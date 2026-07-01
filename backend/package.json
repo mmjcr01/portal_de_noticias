@@ -4,11 +4,15 @@
   "description": "projeto_portal_de_noticias",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
@@ -17,7 +21,6 @@
     "express-rate-limit": "^8.2.1",
     "express-session": "^1.18.2",
     "firebase-admin": "^10.3.0",
-    "force": "^0.0.3",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",

@@ -11,14 +11,13 @@ require("dotenv").config(); // Carrega variáveis do .env
 const session = require("express-session");
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
 const routesCategorias = require("./src/routes/routesCategorias.js");
 const routesArtigos = require("./src/routes/routesArtigos.js");
 const routesHome = require("./src/routes/routesHome.js");
 const routesUsuarios = require("./src/routes/routesUsuarios.js");
 const routesCadastro = require("./src/routes/routesCadastro.js");
 const routesLogin = require("./src/routes/routesLogin.js");
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 // Middleware para gerar nonce
 app.use((req, res, next) => {
@@ -57,7 +56,7 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || "portal-secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -87,8 +86,8 @@ app.use((req, res, next) => {
   };
   next();
 });
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(express.static("public"));
 
 app.use("/categorias", routesCategorias);
@@ -98,6 +97,10 @@ app.use("/usuarios", routesUsuarios);
 app.use("/cadastro", routesCadastro);
 app.use("/login", routesLogin);
 
-app.listen(port, () => {
-  console.log(`Servidor iniciado em http://localhost:${port}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(port, () => {
+    console.log(`Servidor iniciado em http://localhost:${port}`);
+  });
+}
+
+module.exports = app;

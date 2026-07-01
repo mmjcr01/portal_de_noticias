@@ -1,24 +1,76 @@
-const { initializeApp, getApps, cert } = require("firebase-admin/app");
+const fs = require("fs");
+const path = require("path");
+const {
+  initializeApp,
+  getApps,
+  cert,
+  applicationDefault,
+} = require("firebase-admin/app");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 
+let firestore = null;
+
 const initializeFirestore = () => {
-  if (!getApps().length) {
-    initializeApp({
-      credential: cert(require("../../serviceAccount.json")),
-    });
+  if (firestore) {
+    return firestore;
   }
 
-  return getFirestore();
+  if (!getApps().length) {
+    try {
+      const serviceAccountPath = path.join(
+        __dirname,
+        "..",
+        "..",
+        "serviceAccount.json",
+      );
+
+      if (fs.existsSync(serviceAccountPath)) {
+        const serviceAccount = require(serviceAccountPath);
+        initializeApp({
+          credential: cert(serviceAccount),
+        });
+      } else if (
+        process.env.FIREBASE_PROJECT_ID ||
+        process.env.GOOGLE_CLOUD_PROJECT ||
+        process.env.GCLOUD_PROJECT
+      ) {
+        initializeApp({
+          credential: applicationDefault(),
+        });
+      } else {
+        console.warn("Firestore não configurado. Pulando conexão com o banco.");
+        return null;
+      }
+    } catch (error) {
+      console.warn("Firestore indisponível:", error.message);
+      return null;
+    }
+  }
+
+  try {
+    firestore = getFirestore();
+    return firestore;
+  } catch (error) {
+    console.warn("Erro ao inicializar Firestore:", error.message);
+    return null;
+  }
 };
 
-const firestore = initializeFirestore();
+firestore = initializeFirestore();
 
 const normalizeDoc = (doc) => ({
   id: doc.id,
   ...doc.data(),
 });
 
-const getCollection = (collectionName) => firestore.collection(collectionName);
+const getCollection = (collectionName) => {
+  const db = initializeFirestore();
+  if (!db) {
+    return null;
+  }
+
+  return db.collection(collectionName);
+};
 
 const buildQuery = (collectionName, options = {}) => {
   let query = getCollection(collectionName);
@@ -44,22 +96,54 @@ const buildQuery = (collectionName, options = {}) => {
 };
 
 const getAll = async (collectionName, options = {}) => {
-  const snapshot = await buildQuery(collectionName, options).get();
-  return snapshot.docs.map(normalizeDoc);
+  const collection = getCollection(collectionName);
+  if (!collection) {
+    return [];
+  }
+
+  try {
+    const snapshot = await buildQuery(collectionName, options).get();
+    return snapshot.docs.map(normalizeDoc);
+  } catch (error) {
+    console.warn(`Erro ao buscar coleção ${collectionName}:`, error.message);
+    return [];
+  }
 };
 
 const getById = async (collectionName, id) => {
-  const snapshot = await getCollection(collectionName).doc(id).get();
-  return snapshot.exists ? normalizeDoc(snapshot) : null;
+  const collection = getCollection(collectionName);
+  if (!collection) {
+    return null;
+  }
+
+  try {
+    const snapshot = await collection.doc(id).get();
+    return snapshot.exists ? normalizeDoc(snapshot) : null;
+  } catch (error) {
+    console.warn(
+      `Erro ao buscar documento ${id} em ${collectionName}:`,
+      error.message,
+    );
+    return null;
+  }
 };
 
 const getByField = async (collectionName, field, value) => {
-  const snapshot = await getCollection(collectionName)
-    .where(field, "==", value)
-    .limit(1)
-    .get();
+  const collection = getCollection(collectionName);
+  if (!collection) {
+    return null;
+  }
 
-  return snapshot.empty ? null : normalizeDoc(snapshot.docs[0]);
+  try {
+    const snapshot = await collection.where(field, "==", value).limit(1).get();
+    return snapshot.empty ? null : normalizeDoc(snapshot.docs[0]);
+  } catch (error) {
+    console.warn(
+      `Erro ao buscar por campo em ${collectionName}:`,
+      error.message,
+    );
+    return null;
+  }
 };
 
 const query = async (collectionName, options = {}) => {
@@ -80,8 +164,20 @@ const create = async (collectionName, data, idField = null) => {
     updatedAt: FieldValue.serverTimestamp(),
   };
 
-  await reference.doc(documentId).set(payload);
-  return { id: documentId, ...payload };
+  if (!reference) {
+    return { id: documentId, ...payload };
+  }
+
+  try {
+    await reference.doc(documentId).set(payload);
+    return { id: documentId, ...payload };
+  } catch (error) {
+    console.warn(
+      `Erro ao criar documento em ${collectionName}:`,
+      error.message,
+    );
+    return { id: documentId, ...payload };
+  }
 };
 
 const update = async (collectionName, id, data) => {
@@ -90,8 +186,21 @@ const update = async (collectionName, id, data) => {
     updatedAt: FieldValue.serverTimestamp(),
   };
 
-  await getCollection(collectionName).doc(id).update(payload);
-  return { id, ...payload };
+  const collection = getCollection(collectionName);
+  if (!collection) {
+    return { id, ...payload };
+  }
+
+  try {
+    await collection.doc(id).update(payload);
+    return { id, ...payload };
+  } catch (error) {
+    console.warn(
+      `Erro ao atualizar documento ${id} em ${collectionName}:`,
+      error.message,
+    );
+    return { id, ...payload };
+  }
 };
 
 const updateByField = async (collectionName, field, value, data) => {
@@ -106,13 +215,39 @@ const updateByField = async (collectionName, field, value, data) => {
     updatedAt: FieldValue.serverTimestamp(),
   };
 
-  await getCollection(collectionName).doc(existing.id).update(payload);
-  return { id: existing.id, ...existing, ...payload };
+  const collection = getCollection(collectionName);
+  if (!collection) {
+    return { id: existing.id, ...existing, ...payload };
+  }
+
+  try {
+    await collection.doc(existing.id).update(payload);
+    return { id: existing.id, ...existing, ...payload };
+  } catch (error) {
+    console.warn(
+      `Erro ao atualizar por campo em ${collectionName}:`,
+      error.message,
+    );
+    return { id: existing.id, ...existing, ...payload };
+  }
 };
 
 const remove = async (collectionName, id) => {
-  await getCollection(collectionName).doc(id).delete();
-  return true;
+  const collection = getCollection(collectionName);
+  if (!collection) {
+    return true;
+  }
+
+  try {
+    await collection.doc(id).delete();
+    return true;
+  } catch (error) {
+    console.warn(
+      `Erro ao remover documento ${id} em ${collectionName}:`,
+      error.message,
+    );
+    return true;
+  }
 };
 
 const deleteByField = async (collectionName, field, value) => {
@@ -122,8 +257,21 @@ const deleteByField = async (collectionName, field, value) => {
     return false;
   }
 
-  await getCollection(collectionName).doc(existing.id).delete();
-  return true;
+  const collection = getCollection(collectionName);
+  if (!collection) {
+    return true;
+  }
+
+  try {
+    await collection.doc(existing.id).delete();
+    return true;
+  } catch (error) {
+    console.warn(
+      `Erro ao remover por campo em ${collectionName}:`,
+      error.message,
+    );
+    return true;
+  }
 };
 
 const getArtigosView = async () => {

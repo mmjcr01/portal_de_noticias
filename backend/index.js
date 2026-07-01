@@ -26,17 +26,20 @@ app.use((req, res, next) => {
   next();
 });
 
-// Segurança: Helmet para proteger contra vulnerabilidades comuns
+
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
+        defaultSrc: ["'self'"], // Permite carregar recursos do próprio servidor por padrão
         scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.nonce}'`],
+        styleSrc: ["'self'", "'unsafe-inline'"], // ◄ ISSO AQUI LIBERA O SEU CSS! ('unsafe-inline' é necessário caso o EJS ou pacotes injetem estilos inline)
+        fontSrc: ["'self'", "https://fonts.gstatic.com"], // Se usar Google Fonts, já deixa liberado
         imgSrc: [
           "'self'",
           "data:",
           "https://picsum.photos",
-          "https://fastly.picsum.photos", // CDN que o picsum usa pra servir as imagens
+          "https://fastly.picsum.photos", 
         ],
       },
     },

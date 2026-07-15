@@ -9,6 +9,72 @@
  */
 const db = require("../database/db.js");
 
+const fallbackArtigos = [
+  {
+    id_artigo: "fallback_destaque_1",
+    titulo_artigo: "TechNews destaca as principais novidades da semana",
+    resumo_artigo:
+      "Confira os destaques da semana em tecnologia, cultura e economia.",
+    imagem_destaque_artigo: "https://picsum.photos/seed/home1/800/500",
+    alt_imagem: "Resumo da homepage",
+    nome_categoria: "Tecnologia",
+    destaque: 1,
+  },
+  {
+    id_artigo: "fallback_destaque_2",
+    titulo_artigo:
+      "Campanha de capacitação digital cresce entre pequenos negócios",
+    resumo_artigo:
+      "Pequenos negócios reforçam presença digital com ferramentas acessíveis.",
+    imagem_destaque_artigo: "https://picsum.photos/seed/home2/800/500",
+    alt_imagem: "Pessoa trabalhando com notebook",
+    nome_categoria: "Economia",
+    destaque: 2,
+  },
+  {
+    id_artigo: "fallback_destaque_3",
+    titulo_artigo: "Festival local reúne público nas principais cidades",
+    resumo_artigo:
+      "A programação ganha destaque com atrações regionais e shows gratuitos.",
+    imagem_destaque_artigo: "https://picsum.photos/seed/home3/800/500",
+    alt_imagem: "Festival ao ar livre",
+    nome_categoria: "Cultura",
+    destaque: 2,
+  },
+];
+
+const fallbackCategorias = [
+  {
+    id_categoria: "fallback_cat_tech",
+    nome_categoria: "Tecnologia",
+    ativo: true,
+  },
+  {
+    id_categoria: "fallback_cat_economia",
+    nome_categoria: "Economia",
+    ativo: true,
+  },
+  {
+    id_categoria: "fallback_cat_cultura",
+    nome_categoria: "Cultura",
+    ativo: true,
+  },
+];
+
+const fallbackMaisLidos = [
+  {
+    id_artigo: "fallback_destaque_1",
+    resumo_artigo:
+      "Confira os destaques da semana em tecnologia, cultura e economia.",
+    imagem_destaque_artigo: "https://picsum.photos/seed/home1/800/500",
+    alt_imagem: "Resumo da homepage",
+    nome_categoria: "Tecnologia",
+    total_acessos: 12,
+  },
+];
+
+const temDadosHome = (artigos) => Array.isArray(artigos) && artigos.length > 0;
+
 // Função para buscar categorias
 /**
  * Busca categorias ativas que possuem artigos sem destaque.
@@ -90,13 +156,19 @@ exports.listarArtigos = async (req, res) => {
   const base_imagem = "/css/assets/images/";
 
   try {
-    const artigos = await db.getArtigosView();
-    const artigosSemDestaque = artigos.filter(
-      (artigo) => Number(artigo.destaque) === 0,
-    );
-    const artigos_destaque = await exports.listarArtigosDestaque();
-    const categorias = await exports.buscarCategorias();
-    const artigosMaisLidos = await exports.maisLidosSemana();
+    const artigos = (await db.getArtigosView()) || [];
+    const artigosSemDestaque = temDadosHome(artigos)
+      ? artigos.filter((artigo) => Number(artigo.destaque) === 0)
+      : fallbackArtigos.filter((artigo) => Number(artigo.destaque) === 0);
+    const artigos_destaque = temDadosHome(artigos)
+      ? await exports.listarArtigosDestaque()
+      : fallbackArtigos.filter((artigo) => Number(artigo.destaque) > 0);
+    const categorias = temDadosHome(artigos)
+      ? await exports.buscarCategorias()
+      : fallbackCategorias;
+    const artigosMaisLidos = temDadosHome(artigos)
+      ? await exports.maisLidosSemana()
+      : fallbackMaisLidos;
 
     res.render("index", {
       login: req.session.user || null,

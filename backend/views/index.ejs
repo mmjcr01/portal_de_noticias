@@ -96,8 +96,8 @@
   <main class="grid container">
     <section id="destaque" class="destaque-container">
     <% 
-    const artigoPrincipal = artigos_destaque.find(artigo => artigo.destaque === 1);
-    const artigosSecundarios = artigos_destaque.filter(artigo => artigo.destaque === 2).slice(0, 4);
+    const artigoPrincipal = artigos_destaque.find(artigo => Number(artigo.destaque) === 1);
+    const artigosSecundarios = artigos_destaque.filter(artigo => Number(artigo.destaque) === 2).slice(0, 4);
     %>
     
     <!-- Artigo Principal -->

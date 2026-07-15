@@ -26,7 +26,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -39,18 +38,18 @@ app.use(
           "'self'",
           "data:",
           "https://picsum.photos",
-          "https://fastly.picsum.photos", 
+          "https://fastly.picsum.photos",
         ],
       },
     },
   }),
 );
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 // Segurança: Rate Limiting para prevenir ataques de força bruta
 if (process.env.NODE_ENV === "production") {
   const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, 
-    max: 100, 
+    windowMs: 15 * 60 * 1000,
+    max: 100,
     message: "Muitas tentativas de acesso. Tente novamente mais tarde.",
   });
   app.use(limiter);
@@ -68,7 +67,6 @@ app.use(
     },
   }),
 );
-
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -91,6 +89,9 @@ app.use((req, res, next) => {
 });
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use("/css", express.static(path.join(__dirname, "public", "css")));
+app.use("/js", express.static(path.join(__dirname, "public", "js")));
+app.use("/images", express.static(path.join(__dirname, "public", "images")));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/categorias", routesCategorias);

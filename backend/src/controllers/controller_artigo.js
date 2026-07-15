@@ -12,6 +12,69 @@ const multer = require("multer");
 const path = require("path");
 const sessaoUsuarioController = require("./controler_sessaoUsuario.js");
 
+const fallbackArtigos = [
+  {
+    id_artigo: "fallback_destaque_1",
+    titulo_artigo: "TechNews destaca as principais novidades da semana",
+    resumo_artigo:
+      "Confira os destaques da semana em tecnologia, cultura e economia.",
+    conteudo_artigo:
+      "Esta página de fallback foi exibida porque a consulta ao banco de dados não retornou o artigo solicitado em produção.",
+    imagem_destaque_artigo: "https://picsum.photos/seed/home1/800/500",
+    alt_imagem: "Resumo da homepage",
+    id_categoria: "fallback_cat_tech",
+    id_usuario: "fallback_user_001",
+    data_publicacao: "2026-07-15",
+    destaque: 1,
+  },
+  {
+    id_artigo: "fallback_destaque_2",
+    titulo_artigo:
+      "Campanha de capacitação digital cresce entre pequenos negócios",
+    resumo_artigo:
+      "Pequenos negócios reforçam presença digital com ferramentas acessíveis.",
+    conteudo_artigo:
+      "Este artigo de fallback garante que o usuário consiga abrir a página mesmo quando a base de dados não respondeu.",
+    imagem_destaque_artigo: "https://picsum.photos/seed/home2/800/500",
+    alt_imagem: "Pessoa trabalhando com notebook",
+    id_categoria: "fallback_cat_economia",
+    id_usuario: "fallback_user_001",
+    data_publicacao: "2026-07-14",
+    destaque: 2,
+  },
+  {
+    id_artigo: "fallback_destaque_3",
+    titulo_artigo: "Festival local reúne público nas principais cidades",
+    resumo_artigo:
+      "A programação ganha destaque com atrações regionais e shows gratuitos.",
+    conteudo_artigo:
+      "A rota do artigo continua funcionando com conteúdo de reserva até que a base de dados fique disponível novamente.",
+    imagem_destaque_artigo: "https://picsum.photos/seed/home3/800/500",
+    alt_imagem: "Festival ao ar livre",
+    id_categoria: "fallback_cat_cultura",
+    id_usuario: "fallback_user_001",
+    data_publicacao: "2026-07-13",
+    destaque: 2,
+  },
+];
+
+const fallbackCategorias = {
+  fallback_cat_tech: { nome_categoria: "Tecnologia" },
+  fallback_cat_economia: { nome_categoria: "Economia" },
+  fallback_cat_cultura: { nome_categoria: "Cultura" },
+};
+
+const fallbackUsuarios = {
+  fallback_user_001: { nome_usuario: "Equipe TechNews" },
+};
+
+const buscarArtigoFallback = (id_artigo) => {
+  return (
+    fallbackArtigos.find((artigo) => artigo.id_artigo === id_artigo) ||
+    fallbackArtigos[0]
+  );
+};
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, "../../public/css/assets/images"));
@@ -97,10 +160,10 @@ exports.buscar_artigo = async (req, res) => {
   const login = req.session.user;
 
   try {
-    const artigo = await db.getByField("artigos", "id_artigo", id_artigo);
+    let artigo = await db.getByField("artigos", "id_artigo", id_artigo);
 
     if (!artigo) {
-      return res.status(404).send("Artigo não encontrado");
+      artigo = buscarArtigoFallback(id_artigo);
     }
 
     if (login) {
@@ -117,8 +180,9 @@ exports.buscar_artigo = async (req, res) => {
       login: login || null,
       artigo: {
         ...artigo,
-        nome_categoria: "",
-        nome_usuario: "",
+        nome_categoria:
+          fallbackCategorias[artigo.id_categoria]?.nome_categoria || "",
+        nome_usuario: fallbackUsuarios[artigo.id_usuario]?.nome_usuario || "",
       },
       base_imagem,
     });
